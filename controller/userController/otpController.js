@@ -45,6 +45,7 @@ const otpSignup = async(req,res)=>{
             await wishList.save()
             req.session.user = userDetails.email;
             req.session.userId = newUser._id;
+            req.session.isLoggedUser = true;
             res.status(200).json({ message: 'success' });
             
         }

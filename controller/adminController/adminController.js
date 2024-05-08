@@ -112,7 +112,6 @@ const generateReport = async (req, res) => {
         const orders = await Order.find({
             date: { $gte: new Date(startDate), $lte: new Date(endDate) }
         }).populate('products.product');
-        console.log('orders ',orders);
         // Process fetched orders to extract necessary information for the report
         const reportData = orders.map((order, index) => {
             // let totalPrice = 0;
@@ -138,7 +137,6 @@ const generateReport = async (req, res) => {
             };
         });
         res.status(200).json({ reportData });
-        console.log('reportData: ',reportData);
     } catch (err) {
         console.error('Error generating report:', err);
         res.status(500).json({ error: 'Failed to generate report' });
@@ -222,7 +220,6 @@ const fetchDashboard = async (req, res, next) => {
       });
       const labels = Object.keys(salesData).map(date => formatDate(new Date(date)));
       const values = Object.values(salesData);
-      console.log('labels',labels,'values', values);
       res.json({ labels, values });
     } catch (error) {
       console.error('Error fetching sales:', error);
@@ -297,7 +294,6 @@ const createNewCat = async (req, res) => {
         const categoryDescription = req.body.description
         const categoryRegx = /^[a-zA-Z0-9]+(?:[ -][a-zA-Z0-9]+)*$/;
         const categoryRegxCheck = categoryRegx.test(categoryName)
-        console.log(categoryRegxCheck);
         categoryExists = categories.some(item=>item.category == categoryName)
         if(categoryExists){
             res.render('admin/createCat',{catAlert:'The category is already exists'})
@@ -424,7 +420,6 @@ const addProduct = async (req, res) => {
 
         product.save()
             .then(() => {
-                console.log('New product:', product);
                 res.redirect('/adminProductPage');
             })
             .catch(error => {
@@ -462,9 +457,7 @@ const productEdit = async (req,res)=>{
             const { productTitle, description, price, stock, category, productVariant, productId } = req.body;
             let images = req.files.map(file => file.filename);
             const product = await Products.findOne({_id:productId})
-            console.log('images',images,'    ','productimg',product.image);
             images = [...images,...product.image]
-            console.log('updated',images);
             await Products.findOneAndUpdate({_id:productId},{
                 productTitle: productTitle,
                 description: description,
@@ -528,7 +521,6 @@ const orders = async(req,res)=>{
 const orderDetails = async(req,res)=>{
     try {
         const orderId = req.query.orderId
-        // console.log(orderId);
         const order = await Order.findOne({_id:orderId}).populate('userId').populate('products.product')
 
         res.render('admin/orderDetailsPage',{order})
@@ -546,7 +538,6 @@ const orderStatusUpdate = async(req,res)=>{
         const order = await Order.findOne({_id:orderId})
         order.orderStatus = orderStatus
         order.save()
-        console.log(order);
         res.status(200).json({ message: 'Order status updated successfully' });
     } catch (error) {
         console.error(error);
@@ -629,7 +620,6 @@ const editCoupon = async(req,res)=>{
             coupon.maximumAmount = max_amount;
             coupon.expiryDate = expiry_date;
             await coupon.save()
-            console.log('success');
             res.redirect('/couponList')
         }
         
@@ -694,7 +684,6 @@ const bestProductPage = async (req, res) => {
             },
         ]);
 
-        console.log('bestSellingProducts:', bestSellingProducts);
         res.status(200).render('admin/bestProduct', { bestSellingProducts });
     } catch (error) {
         console.error(error);
@@ -738,7 +727,6 @@ const bestCategoryPage = async (req, res) => {
                 $limit: 5
             }
         ]);
-        console.log("Best Selling Categories:", bestSellingCategories);
         res.render('admin/bestCategory', { bestSellingCategories });
     } catch (error) {
         console.error("Error:", error);

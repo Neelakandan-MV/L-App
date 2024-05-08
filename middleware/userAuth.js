@@ -25,7 +25,7 @@ const isActive = async(req,res,next)=>{
         }else{
             req.session.user = null
             req.session.isLoggedUser = null 
-            next()
+            res.redirect('/userLogin')
         }
         }else{
             next()

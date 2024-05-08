@@ -237,10 +237,8 @@ const userAccountPage = async(req,res)=>{
 
     const addAddress = async (req,res)=>{
         try {
-            console.log("hi",req.body);
             userData = req.session.user
-            const {houseName,place,districts,pinCode,email} = req.body    
-            console.log(houseName,place,districts,pinCode,email);
+            const {houseName,place,districts,pinCode,email} = req.body
             const address = await Address.find()
             if(address.length<1){
                 const newAddress = new Address({
@@ -342,9 +340,7 @@ const cartPage = async (req,res)=>{
 const addToCart = async (req, res) => {
     try {
         const productId = req.body.productId;
-        console.log(productId);
         const userId = req.body.userId;
-        console.log(userId);
         const cartDetails = await Cart.find({ userId: userId });
         const product = await Product.findById(productId);
 
@@ -411,7 +407,6 @@ const quantityIncrease = async(req,res)=>{
         // product.stock--
         await product.save()
         const data = await Cart.findOne({userId:user._id})
-        console.log(product.stock)
             res.json(data)
         }
     } catch (error) {
@@ -537,12 +532,9 @@ const cashOnDelivery = async(req,res)=>{
             return item
         })
         const productStocks = products.map(item=>item.quantity)
-        console.log('productStocks',productStocks);
         const productIds = products.map(item=>item.product._id)
-        console.log('ids',productIds);
         for(let i=0;i<productIds.length;i++){
             let productStock = await Product.findOne({_id:productIds[i]},{stock:true})
-            console.log("productStock",productStock);
             if(productStock.stock<=0){
                 return res.json({success:false})
             }
@@ -628,12 +620,9 @@ const orderPlacing = async(req,res)=>{
             return item
         })
         const productStocks = products.map(item=>item.quantity)
-        console.log('productStocks',productStocks);
         const productIds = products.map(item=>item.product._id)
-        console.log('ids',productIds);
         for(let i=0;i<productIds.length;i++){
             let productStock = await Product.findOne({_id:productIds[i]},{stock:true})
-            console.log("productStock",productStock);
             if(productStock.stock<=0){
                 return res.json({success:false})
             }
@@ -828,9 +817,7 @@ const userWalletPage = async(req,res)=>{
     try {
         const userId = req.session.userId
         const user = await User.findOne({_id:userId})
-        console.log('user:',user);
         const wallet = await Wallet.findOne({userId:userId}).populate('userId')
-        console.log('wallet:',wallet);
         const cart = await Cart.findOne({ userId: userId })
         const cartLength = cart ? cart.items.length : 0;
         res.status(200).render('userWallet',{wallet,user,cartLength,page:'wallet',cart})
@@ -877,12 +864,9 @@ const walletPayment = async(req,res)=>{
             return item
         })
         const productStocks = products.map(item=>item.quantity)
-        console.log('productStocks',productStocks);
         const productIds = products.map(item=>item.product._id)
-        console.log('ids',productIds);
         for(let i=0;i<productIds.length;i++){
             let productStock = await Product.findOne({_id:productIds[i]},{stock:true})
-            console.log("productStock",productStock);
             if(productStock.stock<=0){
                 return res.json({success:false})
             }
@@ -1013,7 +997,6 @@ const sortedShop = async(req,res)=>{
         const category = await Category.find({isList:true})
         const product = await Product.find({isBlocked:false})
         const selectedOption = req.query.selectedOption
-        console.log(selectedOption);
         if(selectedOption == 'ascending'){
             const product = await Product.find({isBlocked:false}).sort({price:1})
             res.render('shop', { product, userData, page: 'shop',cart,category });
@@ -1127,12 +1110,10 @@ const emailValidationForPasswordResetting = async(req,res)=>{
         const emailToVerify = req.query.email
         const userExists = await User.findOne({email:emailToVerify})
         if(userExists){
-            console.log('user Exists');
             req.session.userEmailToChangePassword = emailToVerify
             let data = true
             res.json(data)
         }else{
-            console.log('user Not Exists');
             let data = false
             res.json(data)
         }
@@ -1188,11 +1169,8 @@ const otpVerification = async (req,res)=>{
     try{
         const email = req.session.userEmailToChangePassword
         const userOtp = req.body.otp
-        console.log('userInput',userOtp);
         let response =await OTP.find({ email: email }).sort({ createdAt: -1 }).limit(1)
         let otp = response[0]?.otp;
-        console.log('DB-OTP',otp);
-        console.log('email',email);
         if(userOtp !== otp){
             res.status(200).json({ message: 'failed' });
             // res.render('otp',{signupAlert:'Invalid OTP'})
@@ -1210,7 +1188,6 @@ const passwordResettingValidation = async(req,res)=>{
     try{
         const email = req.session.userEmailToChangePassword
         const newPassword = req.body.newPassword
-        console.log(newPassword);
         if(newPassword && email){
             await User.updateOne({email},{$set:{password:newPassword}})
             res.redirect('/userLogin')
@@ -1304,18 +1281,14 @@ const failedOrder = async(req,res)=>{
         const user = await User.findOne({_id:userId})
         const cart = await Cart.findOne({userId})
         const addressforDelivery = await Address.findOne({_id:addressId})
-        console.log(addressforDelivery);
 
         let products = cart.items.map((item)=>{
             return item
         })
         const productStocks = products.map(item=>item.quantity)
-        console.log('productStocks',productStocks);
         const productIds = products.map(item=>item.product._id)
-        console.log('ids',productIds);
         for(let i=0;i<productIds.length;i++){
             let productStock = await Product.findOne({_id:productIds[i]},{stock:true})
-            console.log("productStock",productStock);
             if(productStock.stock<=0){
                 return res.json({success:false})
             }
@@ -1374,6 +1347,47 @@ const retryPayment = async(req,res)=>{
 }
 
 
+const aboutUs = async(req,res)=>{
+    try {
+        const userId = req.session.userId
+        const userData = req.session.user
+        const cart = await Cart.findById(userId) || null
+        res.render('aboutUs',{userData,cart,page:'aboutUs'})
+    } catch (error) {
+        console.error(error);
+    }
+}
+const services = async(req,res)=>{
+    try {
+        const userId = req.session.userId
+        const userData = req.session.user
+        const cart = await Cart.findById(userId) || null
+        res.render('services',{userData,cart,page:'services'})
+    } catch (error) {
+        console.error(error);
+    }
+}
+const blog = async(req,res)=>{
+    try {
+        const userId = req.session.userId
+        const userData = req.session.user
+        const cart = await Cart.findById(userId) || null
+        res.render('blog',{userData,cart,page:'blog'})
+    } catch (error) {
+        console.error(error);
+    }
+}
+const contactUs = async(req,res)=>{
+    try {
+        const userId = req.session.userId
+        const userData = req.session.user
+        const cart = await Cart.findById(userId) || null
+        res.render('contactUs',{userData,cart,page:'contactUs'})
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 
 
 module.exports = {
@@ -1425,7 +1439,11 @@ module.exports = {
     passwordResettingValidation,
     downloadInvoice,
     failedOrder,
-    retryPayment
+    retryPayment,
+    aboutUs,
+    services,
+    blog,
+    contactUs,
     
 
 }

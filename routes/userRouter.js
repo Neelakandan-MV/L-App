@@ -18,7 +18,7 @@ userRouter.post('/userSignup',userController.userSignup)
 
 userRouter.get('/',isActive,userController.userHomepage)
 
-userRouter.get('/userLogout',userController.userLogout)
+userRouter.get('/userLogout',isUser,userController.userLogout)
 
 userRouter.post('/send-email', emailController.mailSender);
 
@@ -47,61 +47,69 @@ userRouter.get('/productPage',isActive,userController.productPages)
 
 //userAccount
 
-userRouter.get('/userAccount',isActive,userController.userAccountPage)
+userRouter.get('/userAccount',isActive,isUser,userController.userAccountPage)
 
-userRouter.post('/addAddress',isActive,userController.addAddress)
+userRouter.post('/addAddress',isActive,isUser,userController.addAddress)
 
-userRouter.get('/editAddress',isActive,userController.editAddressPage)
+userRouter.get('/editAddress',isActive,isUser,userController.editAddressPage)
 
-userRouter.post('/editAddress',isActive,userController.editAddress)
+userRouter.post('/editAddress',isActive,isUser,userController.editAddress)
 
-userRouter.get('/removeAddress',isActive,userController.removeAddress)
+userRouter.get('/removeAddress',isActive,isUser,userController.removeAddress)
 
-userRouter.post('/editUser',isActive,userController.editUser)
+userRouter.post('/editUser',isActive,isUser,userController.editUser)
 
 //cart
-userRouter.get('/cart',isActive,userController.cartPage)
-userRouter.post('/addToCart',isActive,userController.addToCart)
-userRouter.put('/quantityIncrease',isActive,userController.quantityIncrease)
-userRouter.put('/quantityDecrease',isActive,userController.quantityDecrease)
-userRouter.get('/deleteCart',isActive,userController.deleteProductFromCart)
+userRouter.get('/cart',isActive,isUser,userController.cartPage)
+userRouter.post('/addToCart',isActive,isUser,userController.addToCart)
+userRouter.put('/quantityIncrease',isActive,isUser,userController.quantityIncrease)
+userRouter.put('/quantityDecrease',isActive,isUser,userController.quantityDecrease)
+userRouter.get('/deleteCart',isActive,isUser,userController.deleteProductFromCart)
 
 //wishList
-userRouter.get('/userWishList',isActive,userController.wishListPage)
-userRouter.patch('/addToWishList',isActive,userController.addToWishList)
-userRouter.delete('/deleteWishList',isActive,userController.deleteWishList)
+userRouter.get('/userWishList',isActive,isUser,userController.wishListPage)
+userRouter.patch('/addToWishList',isActive,isUser,userController.addToWishList)
+userRouter.delete('/deleteWishList',isActive,isUser,userController.deleteWishList)
 
 //checkout Page
-userRouter.get('/checkoutPage',userController.checkoutPage)
-userRouter.patch('/checkoutPage',userController.checkoutPageRefreshedForAddress)
-userRouter.post('/cashOnDelivery',userController.cashOnDelivery)
-userRouter.patch('/checkCoupon',userController.checkCoupon)
+userRouter.get('/checkoutPage',isActive,isUser,userController.checkoutPage)
+userRouter.patch('/checkoutPage',isActive,isUser,userController.checkoutPageRefreshedForAddress)
+userRouter.post('/cashOnDelivery',isActive,isUser,userController.cashOnDelivery)
+userRouter.patch('/checkCoupon',isActive,isUser,userController.checkCoupon)
 
 //razorPay
-userRouter.post('/razorPay',userController.razorPay)
-userRouter.post('/orderPlacing',userController.orderPlacing)
+userRouter.post('/razorPay',isActive,isUser,userController.razorPay)
+userRouter.post('/orderPlacing',isActive,isUser,userController.orderPlacing)
 
-userRouter.get('/orders',userController.order)
-userRouter.post('/failedOrder',userController.failedOrder)
-userRouter.get('/orderDetails/:id',userController.orderDetailsPage)
-userRouter.get('/downloadInvoice/:id',userController.downloadInvoice)
-userRouter.get('/orderCancel',userController.orderCancel)
-userRouter.get('/orderReturn',userController.orderReturn)
-userRouter.post('/retryPayment',userController.retryPayment)
-userRouter.get('/thankyou',userController.thankyouPage)
+userRouter.get('/orders',isActive,isUser,userController.order)
+userRouter.post('/failedOrder',isActive,isUser,userController.failedOrder)
+userRouter.get('/orderDetails/:id',isActive,isUser,userController.orderDetailsPage)
+userRouter.get('/downloadInvoice/:id',isActive,isUser,userController.downloadInvoice)
+userRouter.get('/orderCancel',isActive,isUser,userController.orderCancel)
+userRouter.get('/orderReturn',isActive,isUser,userController.orderReturn)
+userRouter.post('/retryPayment',isActive,isUser,userController.retryPayment)
+userRouter.get('/thankyou',isActive,isUser,userController.thankyouPage)
 
 //change password
-userRouter.get('/changePassword',userController.changePasswordPage)
-userRouter.post('/changePassword',userController.changePassword)
+userRouter.get('/changePassword',isActive,isUser,userController.changePasswordPage)
+userRouter.post('/changePassword',isActive,isUser,userController.changePassword)
 
 //userWallet
-userRouter.get('/wallet',userController.userWalletPage)
-userRouter.post('/addAmount',userController.addAmount)
-userRouter.post('/walletPayment',userController.walletPayment)
+userRouter.get('/wallet',isActive,isUser,userController.userWalletPage)
+userRouter.post('/addAmount',isActive,isUser,userController.addAmount)
+userRouter.post('/walletPayment',isActive,isUser,userController.walletPayment)
 
 
 //singleOrderCancel
-userRouter.get('/singleOrderCancel',userController.singleProductOrderCancel)
+userRouter.get('/singleOrderCancel',isActive,isUser,userController.singleProductOrderCancel)
+
+
+
+//other pages
+userRouter.get('/aboutUs',isActive,userController.aboutUs)
+userRouter.get('/services',isActive,userController.services)
+userRouter.get('/blog',isActive,userController.blog)
+userRouter.get('/contactUs',isActive,userController.contactUs)
 
 
 module.exports = userRouter;
