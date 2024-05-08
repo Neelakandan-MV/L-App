@@ -198,13 +198,15 @@ const productPages = async(req,res)=>{
         const productVariant = await Variant.findById({_id:variantId})
         const variant = await Variant.find({})
         const allProducts = await Product.find({})
-        const userWishList = await WishList.findOne({userId})
         let productInWishlist = false
+        if(req.session.userId){
+        const userWishList = await WishList.findOne({userId})
         const productExist = userWishList.items.map((item)=>{
             if(item.product == productId){
                 return productInWishlist = true
             }
         })
+    }
         res.render('productPage',{product,page:'shop',userData,category,productVariant,variant,allProducts,user,cart,productInWishlist})
     } catch (error) {
         console.error(error);
