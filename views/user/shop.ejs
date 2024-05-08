@@ -1,0 +1,168 @@
+<%- include('./userLayout/userHeader') %>
+<body>
+    <%- include('./userLayout/navBar') %>
+
+	<style>
+		.product-section .container {
+			display: flex; 
+			flex-wrap: wrap; 
+		}
+		.form-select{background-color:#f4f5f9;border:2px solid #f4f5f9;font-size:13px;-webkit-box-shadow:none;box-shadow:none;padding-left:20px;color:#4f5d77;width:100%;border-radius:4px;height:45px}
+	</style>
+
+    <!-- Start Hero Section -->
+    <div class="hero">
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="col-lg-5">
+                    <div class="intro-excerpt">
+                        <h1>Shop</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+    </div>
+    <!-- End Hero Section -->
+	
+	
+	<script>
+		function filterByCategory() {
+			const selectedCategory = document.getElementById('productCategory').value;
+			fetch('/shopFilteredProducts',{
+				method:'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({ selectedCategory:selectedCategory })
+			})
+			.then(response => {
+								if (!response.ok) {
+									throw new Error('Network response was not ok');
+								}
+								return response.json();
+							})
+							.then(data => {
+								const productContainer = document.querySelector('.product-section .container');
+            					productContainer.innerHTML = ''; 
+								data.forEach(product => {
+                const productItem = `
+                    <div class="col-12 col-md-4 col-lg-3 mb-5 product-item">
+                        <a class="product-item-link" href="/productPage?productId=${product._id}">
+                            <div class="container">
+                                <img src="/${product.image[0]}" class="img-fluid product-thumbnail">
+                            </div>
+                            <h3 class="product-title">${product.productTitle}</h3>
+                            <strong class="product-price">₹${product.price}</strong>
+                            <input type="hidden" value="${product.category}">
+                            <span class="icon-cross material-symbols-outlined">open_in_new</span>
+                        </a>
+                    </div>`;
+                productContainer.insertAdjacentHTML('beforeend', productItem);
+            });
+								
+							})
+		}
+	</script>
+	<div class="col-lg-3 col-md-6 mt-3 ms-3" >
+		<input style="background-color: #020D19;" class="form-control container search text-light" id="search" type="search" placeholder="Search Products" aria-label="Search">
+		<div class="mt-2">
+			<select onchange="sortTableByPrice()" class="form-select" id="selectOptions">
+				<option value="showAll">Sort By Price</option>
+				<option value="ascending">Price: Low to High</option>
+				<option value="descending">Price: High to Low</option>
+			</select>			
+		</div>
+		<div class="mb-3 mt-2">
+			<select name="category" class="form-select" id="productCategory"  onchange="filterByCategory()">
+				<option value="filterByCategory">Filter by Category</option>
+			  <% category .forEach(category=> { %>
+				<option value="<%= category._id %>">
+				  <%= category.category %>
+				</option>
+				<% }); %>
+			</select>
+		  </div>
+	</div>
+	
+    <div class="untree_co-section product-section before-footer-section">
+		<div class="container">
+			<div class="row">
+			<% for(let i=0;i<product.length;i++){ %>
+			<!-- Start Column 1 -->
+			<div class="col-12 col-md-4 col-lg-3 mb-5 product-item">
+				<a class="product-item-link"  href="/productPage?productId=<%= product[i]._id %>">
+					<div class="container">
+						<img src="/<%= product[i].image[0] %>" class="img-fluid product-thumbnail">
+					</div>
+					<h3 class="product-title"><%= product[i].productTitle %></h3>
+					<strong class="product-price">₹<%= product[i].price %></strong>
+					<input id="category<%= i %>" type="hidden" value="<%= product[i].category%>">
+					<span class="icon-cross material-symbols-outlined">
+						open_in_new
+					</span>
+				</a>
+			</div> 
+			<!-- End Column 1 -->
+			<% } %>
+		</div>
+	</div>
+</div>
+
+    <%- include('./userLayout/userFooter') %>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('search');
+            const productItems = document.querySelectorAll('.product-item');
+
+            searchInput.addEventListener('input', function () {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+
+                productItems.forEach(function (item) {
+                    const productTitle = item.querySelector('.product-title').textContent.trim().toLowerCase();
+                    const productItem = item.closest('.product-item');
+
+                    if (productTitle.includes(searchTerm)) {
+                        productItem.style.display = ''; // Show matching items
+                    } else {
+                        productItem.style.display = 'none'; // Hide non-matching items
+                    }
+                });
+            });
+        });
+    </script>
+	<script>
+		// function sortTableByPrice() {
+		// 	const products = Array.from(document.querySelectorAll('.product-item'));
+		// 	const selectedOption = document.getElementById('selectOptions').value;
+	
+		// 	products.sort((a, b) => {
+		// 		const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('₹', ''));
+		// 		const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('₹', ''));
+	
+		// 		if (selectedOption === 'ascending') {
+		// 			return priceA - priceB;
+		// 		} else if (selectedOption === 'descending') {
+		// 			return priceB - priceA;
+		// 		} else if (selectedOption === 'showAll') {
+		// 			window.location.reload()
+		// 		}
+		// 	});
+	
+		// 	const container = document.querySelector('.untree_co-section.product-section .container');
+		// 	container.innerHTML = '';
+		// 	products.forEach(product => {
+		// 		container.appendChild(product);
+		// 	});
+		// }
+
+
+		function sortTableByPrice() {
+				const selectedOption = document.getElementById('selectOptions').value;
+				
+				window.location.href = `/sortedShop?selectedOption=${selectedOption}`
+				
+		}
+
+	</script>
+</body>
+</html>

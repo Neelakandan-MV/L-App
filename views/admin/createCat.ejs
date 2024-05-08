@@ -1,0 +1,58 @@
+<%- include('./partials/adminHeader') %>
+
+<body>
+    <%- include('./partials/aside.ejs')  %>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Categories </h2>
+                    <p>Create Category</p>
+                    <%if(locals.catAlert){%>
+                        <div class="alert alert-danger text-center  " id="alert" role="alert">
+                          <%= locals.catAlert%>
+                        </div>
+                        <%}%>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form action="/createCategory" method="post">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Category Name</label>
+                                    <input type="text" name="category" placeholder="Type here" class="form-control" id="product_name" />
+                                </div>
+                                <div class="mb-4">
+                                    <label for="product_description" class="form-label">Description</label>
+                                    <!-- <input type="text" name="description" placeholder="Type here" class="form-control"  /> -->
+                                    <textarea placeholder="Type here" name="description" class="form-control"></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Create category</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <%- include('./partials/adminFooter.ejs') %>
+</body>
+</html>

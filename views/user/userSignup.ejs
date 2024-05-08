@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+  <style>
+    .gradient-custom-3 {
+      /* fallback for old browsers */
+      background: #84fab0;
+
+      /* Chrome 10-25, Safari 5.1-6 */
+      background: -webkit-linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+
+      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))
+    }
+
+    .gradient-custom-4 {
+      /* fallback for old browsers */
+      background: #84fab0;
+
+      /* Chrome 10-25, Safari 5.1-6 */
+      background: -webkit-linear-gradient(to right, rgb(0, 0, 0), rgb(0, 0, 0));
+
+      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      background: linear-gradient(to right, rgb(0, 0, 0), rgb(0, 0, 0))
+    }
+
+    .form-outline small {
+      color: #e74c3c;
+      bottom: 0;
+      left: 0;
+      visibility: hidden;
+    }
+    .form-outline .error small {
+	  visibility: visible;
+}
+
+
+.form-control-error input {
+	border-color: #e74c3c;
+}
+
+small{
+  color: #e74c3c;
+}
+  </style>
+  <section class="vh-15y0 bg-image">
+    <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+      <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col-12 col-md-9 col-lg-7 col-xl-6">
+            <div class="card m-3" >
+              <div class="card-body p-5">
+                <h2 class="text-uppercase text-center mb-5">Create an account</h2>
+                <%if(locals.signupAlert){%>
+                  <div class="alert alert-danger text-center" id="signupAlert" role="alert">
+                      <%=(locals.signupAlert)%>
+                  </div>
+                  <%}%>
+
+                <form action="/userSignup" method="post" id="form">
+
+                  <div class="form-outline mb-2">
+                    <input type="text" id="username" placeholder="Username" name="username" class="form-control form-control-lg" />
+                    <!-- <label class="form-label" for="form3Example1cg">Your Name</label> -->
+                    <small>Error message</small>
+                  </div>
+
+                  <div class="form-outline mb-2">
+                    <input type="email" id="email" placeholder="Email" name="email" class="form-control form-control-lg" oninput="validateEmail()"/>
+                    <h2 style="font-size: 10px; color:red;" id="email-error"></h2>
+                    <!-- <label class="form-label" for="form3Example3cg">Your Email</label> -->
+                    <small>Error message</small>
+                    <!-- <span id="email-error"></span> -->
+                  </div>
+
+                  <div class="form-outline mb-2">
+                    
+                    <input type="password" id="password" placeholder="Password" name="password" class="form-control form-control-lg" />
+                    <h2 style="font-size: 12px; color:red;" id="password-error"></h2>
+                    <!-- <label class="form-label" for="form3Example4cg">Password</label> -->
+                    <small>Error message</small>
+                    <!-- <span id="password-error"></span> -->
+                  </div>
+
+                  <div class="form-outline mb-2">
+                    <input type="password" id="password2" placeholder="Confirm Password" class="form-control form-control-lg" />
+                    <!-- <label class="form-label" for="form3Example4cdg">Confirm Password</label> -->
+                    <small>Error message</small>
+                  </div>
+
+                  <div class="form-outline mb-2">
+                    <input type="text" id="phoneNumber" placeholder="Phone Number" name="phone" class="form-control form-control-lg" />
+                    <!-- <label class="form-label" for="form3Example4cdg">Confirm Password</label> -->
+                    <small>Error message</small>
+                  </div>
+
+                  <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success btn-block btn-lg gradient-custom-4 ">Register</button>
+                  </div>
+
+                  <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/userLogin"
+                      class="fw-bold text-body"><u>Login here</u></a></p>
+
+                </form>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+<script>
+  const form = document.getElementById('form');
+
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    checkInput();
+  const username = document.getElementById('username');
+  const email = document.getElementById('email');
+  const password = document.getElementById('password');
+  const password2 = document.getElementById('password2');
+  const phoneNumber = document.getElementById('phoneNumber');
+  })
+
+  function checkInput() {
+    const usernameValue = username.value.trim();
+    const emailValue = email.value.trim();
+    const passwordValue = password.value.trim();
+    const password2Value = password2.value.trim();
+    const phoneNumberValue = phoneNumber.value.trim();
+
+    var regexPatternForUserName = /^[^\d]+$/;
+    var regexPatternforPhone = /^[789]\d{9}$/;
+
+
+    if (usernameValue === '') {
+      setErrorFor(username, 'Username cannot be blank');
+    } else if(!regexPatternForUserName.test(usernameValue)){
+      setErrorFor(username, 'Username cannot be a number')
+    }
+     else {
+      setSuccessFor(username);
+    }
+
+    if (emailValue === '') {
+      setErrorFor(email, 'Email cannot be blank');
+    } else if (!isEmail(emailValue)) {
+      setErrorFor(email, 'Not a valid email');
+    } else {
+      setSuccessFor(email);
+    }
+
+    if (passwordValue === '') {
+      setErrorFor(password, 'Password cannot be blank');
+    }else if (/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(passwordValue) === false) {
+        setErrorFor(password,'At least one letter and one number must be included in the password, which must be eight characters.') 
+        }else {
+      setSuccessFor(password);
+    }
+
+    if (password2Value === '') {
+      setErrorFor(password2, 'Password cannot be blank');
+    } else if (passwordValue !== password2Value) {
+      setErrorFor(password2, 'Passwords does not match');
+    } else {
+      setSuccessFor(password2);
+    }
+
+    if(phoneNumberValue === ''){
+      setErrorFor(phoneNumber,'Phone Number cannot be blank')
+    }else if(!regexPatternforPhone.test(phoneNumberValue)){
+      setErrorFor(phoneNumber,'Invalid Phone Number')
+    }else{
+      setSuccessFor(phoneNumber)
+    }
+
+    if (
+        !form.querySelector('.form-control-error') &&
+        usernameValue &&
+        phoneNumberValue &&
+        emailValue &&
+        passwordValue &&
+        password2Value
+      ) {
+        form.submit();
+      }
+    
+  }
+
+
+  function setErrorFor(input, message) {
+    const formControl = input.parentElement;
+    const small = formControl.querySelector('small');
+    formControl.className = 'form-control-error';
+    small.innerText = message;
+    
+  }
+
+  function setSuccessFor(input) {
+    const formControl = input.parentElement;
+    formControl.className = 'form-outline success';
+  }
+
+  function isEmail(email) {
+    return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email);
+  }
+
+</script>
+<!-- email and password realtime validation -->
+<script>
+  
+function validateEmail() {
+  const emailError = document.getElementById("email-error");
+        const isValid = email.value.match(/^[A-Za-z\._\-0-9]*[@][A-Za-z]*[\.][a-z]{2,4}$/);
+        
+        if (!isValid) {
+            emailError.innerHTML = "Please enter a valid email address";
+            email.style.borderBottomColor = "red";
+            return false;
+        } else {
+            emailError.innerHTML = "";
+            email.style.borderBottomColor = "green";
+            return true;
+        }
+    }
+
+
+
+
+</script>
+<script>
+  // Function to hide the alert message after 3 seconds
+  setTimeout(() => {
+      document.getElementById("signupAlert").style.display = "none";
+  }, 2000);
+</script>
+
+</html>

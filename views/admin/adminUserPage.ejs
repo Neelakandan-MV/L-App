@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend//page-sellers-list by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:23 GMT -->
+<head>
+<%- include('./partials/adminHeader.ejs') %>
+</head>
+
+<body>
+    <%- include('./partials/aside.ejs') %>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">User Details</h2>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-3 col-md-6 me-auto">
+                            <input class="form-control container search text-dark" id="search" type="search" placeholder="Search by Email" aria-label="Search">
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const searchInput = document.getElementById('search');
+                                    const tableRows = document.querySelectorAll('.table-light tr');
+                            
+                                    searchInput.addEventListener('input', function () {
+                                        const searchTerm = searchInput.value.toLowerCase();
+                            
+                                        tableRows.forEach(function (row) {
+                                            const categoryName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+                            
+                                            if (categoryName.includes(searchTerm)) {
+                                                row.style.display = '';
+                                            } else {
+                                                row.style.display = 'none';
+                                            }
+                                        });
+                                    });
+                                });
+                            </script>
+                        <div class="col-lg-2 col-md-3 col-6">
+                            <select onchange="selectsort()" class="form-select " id="selectOptions">
+                                <option value="Select option">Select</option>
+                                <option value="showall">Show all</option>
+                                <option id="active" value="Disabled" >Disabled</option></a>
+                               <option id="disabled" value="Active">Active</option></a>
+                              
+                            </select>
+                        </div>
+                        <!-- <script>
+                            async function selectsort()
+                            {
+                              let sortoption =  document.getElementById('selectOptions').value
+                              console.log(sortoption)
+                              
+                              const response = await fetch(`/active?option=${sortoption}`,{
+                                method:'GET'
+                              })
+                              if(!response.ok)
+                              {
+                                throw new Error('error occured')
+                              }
+                              console.log('success')
+                              location.reload()
+                              
+
+                            }
+                        </script> -->
+                        <div class="col-lg-2 col-md-3 col-6">
+                            <select class="form-select">
+                                <option>Show 20</option>
+                                <option>Show 30</option>
+                                <option>Show 40</option>
+                            </select>
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    
+                    <div class="table-responsive">
+                        <% if (users.length > 0) { %>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Registered</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light tr">
+                                <% for (let i = 0; i < users.length; i++) { %>
+                                <tr>
+                                    <td width="40%">
+                                        <a href="#" class="itemside">
+                                            <div class="left">
+                                            </div>
+                                            <div class="info pl-3">
+                                                <h6 class="mb-0 title"><%= users[i].username %></h6>
+                                                <small class="text-muted">Seller ID: #439</small>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td><%= users[i].email %></td>
+                                    <td><span class="badge rounded-pill <%= users[i].isBlocked == false ? 'alert-success' : 'alert-warning'%> " id="status<%= i %>"><%= users[i].isBlocked == false ? 'Active' : 'Blocked' %></span></td>
+                                    <td><%= users[i].phone %></td>
+                                    <td class="text-end">
+                                        <input type="hidden" value="<%= users[i]._id %>" id="userId<%= i %>">
+                                        <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15 toggle-btn" onclick="toggle('<%= i %>')"><%= users[i].isBlocked == true ? 'Activate' : 'Block' %></a>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                        <% } else { %>
+                        <h1 class="text-center text-secondary mt-5">No users found in the database</h1>
+                        <% } %>
+                    </div>
+                    
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+                    
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <%- include('./partials/adminFooter.ejs') %>
+    <script src="/js/users.js"> </script>
+
+
+
+
+    <script>
+
+
+
+function toggle(index) {
+    const userId = document.getElementById(`userId${index}`).value
+    
+
+    console.log(userId)
+    fetch(`/usertoggle?userId=${userId}`, {
+        method: "PUT",
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+        setTimeout(() => {
+        window.location.reload()     //This setTimeOut should be removed before hosting
+}, 800);
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bootstrap link -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <!-- linking css -->
+    <link rel="stylesheet" href="/static/style-login.css" />
+    <!-- fontawesome link -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <title><%=locals.title?title:'Login Page'%></title>
+  </head>
+  <body></body>
+</html>
+
+<style>
+  body {
+    background-color: #f3e0e2;
+  }
+</style>
+<div class="big">
+  <div class="left">
+    <h3 class="text-dark text-center mt-4"><b>LOGIN</b></h3>
+    <%if(locals.adminAlert){%>
+      <div class="alert alert-danger text-center  " id="alert" role="alert">
+        <%= locals.adminAlert%>
+      </div>
+      <%}%>
+    <%if(locals.adminLogout){%>
+      <div class="alert alert-success text-center" id="logout" role="alert">
+        <%=(locals.adminLogout)%>
+      </div>
+      <%}%>
+    <form action="/adminLogin" method="post" class="form">
+      <input
+        type="email"
+        placeholder="Enter email"
+        name="email"
+        class="form-control login-email"
+        required
+      />
+      <input
+        type="password"
+        placeholder="password"
+        name="password"
+        class="form-control login-password"
+        required
+      />
+      <button type="submit" class="btn-login">LOGIN</button>
+    </form>
+  </div>
+  <div class="right">
+    <h3 class="WELCOME text-center"><b>WELCOME ADMIN</b></h3>
+  </div>
+</div>
+<script>
+  setTimeout(() => {
+  document.getElementById("alert").style.display = "none";
+}, 3000);
+  setTimeout(() => {
+  document.getElementById("logout").style.display = "none";
+}, 3000);
+</script>
+
+<%-include('../admin/partials/adminFooter')%>
+

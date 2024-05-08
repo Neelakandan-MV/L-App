@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+
+<!-- Mirrored from wp.alithemes.com/html/evara/evara-backend//page-sellers-list by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 01 Aug 2021 15:33:23 GMT -->
+<head>
+<%- include('./partials/adminHeader.ejs') %>
+</head>
+
+<body>
+    <%- include('./partials/aside.ejs') %>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <h2 class="content-title">Products Details</h2>
+                <div>
+                    <a href="/variantPage" class="btn btn-primary"><i class="material-icons md-plus"></i> Add Variants</a>
+                </div>
+                <div>
+                    <a href="/createProduct" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-3 col-md-6 me-auto">
+                            <input class="form-control container search text-dark" id="search" type="search" placeholder="Search Categories" aria-label="Search">
+                        </div>
+                            <div class="col-lg-4 col-md-3 me-auto">
+                        <button class="btn btn-primary" id="searchButton" type="button" >Search</button></div>
+                        <div class="col-lg-2 col-md-3 col-6">
+                            <select onchange="sortTableByStatus()" class="form-select" id="selectOptions">
+                                    <option value="showall">Show all</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Blocked">Blocked</option>
+                            </select>
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <% if (products.length > 0) { %>
+                        <table class="table table-hover">
+                            
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Title</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                    <th class="text-end">Edit</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light">
+                                <% for (let i = 0; i < products.length; i++) { %>
+                                <tr>
+                                    <td><img src="/<%= products[i].image[0] %>" class="img-sm img-thumbnail" alt="Item"></td>
+                                    <td width="40%">
+                                        <a href="#" class="itemside">
+                                            <div class="left">
+                                            </div>
+                                            <div class="info pl-3">
+                                                <h6 class="mb-0 title"><%= products[i].productTitle %></h6>
+                                                <input type="hidden" value="<%= products[i]._id %>" id="productId<%=i%>">
+                                                <small class="text-muted">Seller ID: #439</small>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td>₹  <%= products[i].price %></td>
+                                    <td><span class="badge rounded-pill <%= products[i].isBlocked == false ? 'alert-success' : 'alert-warning'%> " id="status<%= i %>"><%= products[i].isBlocked == false ? 'Active' : 'Blocked' %></span></td>
+                                    <td><a onclick="isListed('<%= i %>')" class="btn btn-sm btn-brand rounded font-sm mt-14 toggle-btn <%= products[i].isBlocked == false ? 'alert-success' : 'alert-danger' %>" ><%= products[i].isBlocked==false ? 'Block': 'Unblock' %></a></td>
+                                    <td class="text-end">
+                                        <a  href="/productEdit?productId=<%= products[i]._id %>"><span class="material-symbols-outlined">
+                                            edit
+                                            </span> </a>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                        <% } else { %>
+                        <h1 class="text-center text-secondary mt-5">No users found in the database</h1>
+                        <% } %>
+                    </div>
+                    
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+                    
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <%- include('./partials/adminFooter.ejs') %>
+    <script src="/js/users.js"> </script>
+
+
+
+<script>function isListed(index) {
+    const productId = document.getElementById(`productId${index}`).value
+    fetch(`/isList_product?productId=${productId}`, {
+        method:'PUT',
+    })
+
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+    });
+
+    setTimeout(() => {
+        window.location.reload()                                    ///This setTimeOut should be removed before hosting
+    }, 800);
+
+} </script>
+
+
+<script>
+    function sortTableByStatus() {
+        const table = document.querySelector('.table');
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        const selectedStatus = document.getElementById('selectOptions').value;
+        rows.sort((a, b) => {
+            const statusA = a.querySelectorAll('td')[3].innerText.trim();
+            const statusB = b.querySelectorAll('td')[3].innerText.trim();
+
+            // Sort in ascending order
+            if (selectedStatus === 'Active') {
+                if (statusA === 'Active' && statusB === 'Blocked') return -1;
+                if (statusA === 'Blocked' && statusB === 'Active') return 1;
+                return 0;
+            }
+            
+            else if (selectedStatus === 'Blocked') {
+                if (statusA === 'Active' && statusB === 'Blocked') return 1;
+                if (statusA === 'Blocked' && statusB === 'Active') return -1;
+                return 0;
+            }
+            else {
+                window.location.reload()
+            }
+        });
+
+        tbody.innerHTML = '';
+        rows.forEach(row => tbody.appendChild(row));
+    }
+</script>
+
+<!-- code for search -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search');
+        const tableRows = document.querySelectorAll('.table-light tr');
+
+        searchInput.addEventListener('input', function () {
+            const searchTerm = searchInput.value.toLowerCase();
+
+            tableRows.forEach(function (row) {
+                const categoryName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+
+                if (categoryName.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

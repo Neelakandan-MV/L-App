@@ -1,0 +1,52 @@
+<%- include('./partials/adminHeader.ejs') %>
+<div class="screen-overlay"></div>
+<%- include('./partials/aside.ejs') %>
+<main class="main-wrap">
+  
+      <section class="content-main">
+        <div class="content-header">
+          <h2 class="content-title">Best Selling Products</h2>
+        </div>
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="table">
+              <% if (bestSellingProducts !='' ) { %>
+                <table class="table table-striped text-center">
+                  <thead>
+                    <tr class="table-dark">
+                      <th>ID</th>
+                      <th>Product Title</th>
+                      <th>Total Quantity Sold</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% bestSellingProducts.forEach((product,index)=> { %>
+                      <tr>
+                        <td>
+                          <%= index+1 %>
+                        </td>
+                        <td>
+                          <%= product.productTitle %>
+                        </td>
+                        <td>
+                          <%= product.totalQuantity %>
+                        </td>
+                      </tr>
+                      <% }); %>
+                  </tbody>
+
+                </table>
+                <% }else{ %>
+                  <h1 class="text-center text-secondary mt-5">
+                    No products
+                  </h1>
+
+                  <% } %>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <!-- content-main end// -->
+
+    <%- include('./partials/adminFooter.ejs') %>

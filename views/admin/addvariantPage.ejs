@@ -1,0 +1,59 @@
+<%- include('./partials/adminHeader') %>
+
+<body>
+    <%- include('./partials/aside.ejs')  %>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Variant </h2>
+                    <p>Create a variant</p>
+                    <%if(locals.alert){%>
+                        <div class="alert alert-danger text-center  " id="alert" role="alert">
+                          <%= locals.alert%>
+                          <% } %>
+                        </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <form action="/createVariant" method="post">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Variants</label>
+                                    <input type="text" name="variant" placeholder="Type here" class="form-control" id="variant_name" />
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <%- include('./partials/adminFooter.ejs') %>
+</body>
+<script>
+    setTimeout(() => {
+  document.getElementById("alert").style.display = "none";
+}, 3000);
+</script>
+
+</html>

@@ -1,0 +1,618 @@
+<%- include('./userLayout/userHeader') %>
+
+	<body>
+
+		<%- include('./userLayout/navBar') %>
+
+			<body>
+				<!-- Start Hero Section -->
+				<div class="hero">
+					<div class="container">
+						<div class="row justify-content-between">
+							<div class="col-lg-5">
+								<div class="intro-excerpt">
+									<h1>Checkout</h1>
+								</div>
+							</div>
+							<div class="col-lg-7">
+
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- End Hero Section -->
+
+				<div class="untree_co-section">
+					<div class="container">
+						<!-- <form action="/checkoutPage" method="post" id="form"> -->
+						<div class="row">
+							<div class="col-md-6 mb-5 mb-md-0">
+								<% if(address){ %>
+									<h2 class="h3 mb-3 text-black">Select address</h2>
+									<% }else{ %>
+										<h2 class="h3 mb-3 text-black"> Add address</h2>
+										<% } %>
+											<div class="p-3 p-lg-5 border bg-white">
+												<% if(address){ %>
+													<div class="col-md-12">
+														<label for="c_fname" class="text-black">Select Address<span
+																class="text-danger">*</span></label>
+														<select class="form-control" id="select-address"
+															name="selectAddress">
+															<% for(let i=0;i<addresses.length;i++){ %>
+																<option value="<%= addresses[i]._id %>">
+																	Address <%= i + 1 %>
+																</option>
+																<% } %>
+														</select>
+													</div>
+
+													<div class="col-md-12">
+														<label for="c_fname" class="text-black">House/Building Name<span
+																class="text-danger">*</span></label>
+														<input type="text" class="form-control" id="houseName"
+															name="houseName" value="<%= address.houseName %>">
+													</div>
+
+													<div class="form-group row">
+														<div class="col-md-6">
+															<label for="c_lname" class="text-black">Place <span
+																	class="text-danger">*</span></label>
+															<input type="text" class="form-control" id="place"
+																name="place" value="<%= address.place %>">
+														</div>
+
+														<div class="col-md-6">
+															<label for="c_companyname"
+																class="text-black">District</label>
+															<input type="text" class="form-control" id="district"
+																name="district" value="<%= address.district %>">
+														</div>
+													</div>
+
+													<div class="form-group row">
+														<div class="col-md-6">
+															<label for="c_address" class="text-black">PIN Code<span
+																	class="text-danger">*</span></label>
+															<input type="text" class="form-control" id="pinCode"
+																name="pinCode" placeholder="Street address"
+																value="<%= address.pinCode %>">
+														</div>
+
+
+
+														<div class="col-md-6">
+															<label for="c_state_country" class="text-black">Email<span
+																	class="text-danger">*</span></label>
+															<input type="text" class="form-control" id="email"
+																name="email" value="<%= address.userEmail %>">
+														</div>
+
+													</div>
+													<input type="hidden" class="form-control" id="addressId"
+														name="addressId" value="<%= address._id %>">
+
+
+													<div class="form-group row">
+														<div class="col-md-12">
+															<label for="c_address" class="text-black">Phone Number<span
+																	class="text-danger">*</span></label>
+															<input type="text" class="form-control" id="pinCode"
+																name="phone" placeholder="Phone Number"
+																value="<%= user.phone %>">
+														</div>
+													</div>
+											</div>
+							</div>
+							<% }else{ %>
+								<div class="col-md-12">
+									<label for="c_fname" class="text-black">House/Building Name<span
+											class="text-danger">*</span></label>
+									<input type="text" class="form-control" id="houseName" name="houseName">
+								</div>
+
+								<div class="form-group row">
+									<div class="col-md-6">
+										<label for="c_lname" class="text-black">Place<span
+												class="text-danger">*</span></label>
+										<input type="text" class="form-control" id="place" name="place">
+									</div>
+
+									<div class="col-md-6">
+										<label for="c_companyname" class="text-black">District</label>
+										<select class="form-control" id="district" name="districts">
+											<% for(let i=0; i<districts.length; i++){ %>
+												<option value="<%= districts[i].name%>">
+													<%= districts[i].name%>
+												</option>
+												<% } %>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group row">
+									<div class="col-md-6">
+										<label for="c_address" class="text-black">PIN Code<span
+												class="text-danger">*</span></label>
+										<input type="text" class="form-control" id="pinCode" name="pinCode"
+											placeholder="Street address">
+									</div>
+
+									<div class="col-md-6">
+										<label for="c_state_country" class="text-black">Email<span
+												class="text-danger">*</span></label>
+										<input type="text" class="form-control" id="email" name="email"
+											value="<%= user.email %>" disabled>
+									</div>
+								</div>
+
+								<div class="form-group row">
+									<div class="col-md-12">
+										<label for="c_address" class="text-black">Phone Number<span
+												class="text-danger">*</span></label>
+										<input type="text" class="form-control" id="phone" name="phone"
+											placeholder="Phone Number" value="<%= user.phone %>" disabled>
+									</div>
+								</div>
+								<button class="btn btn-black btn-sm mt-4" type="button" id="addressSubmit"
+									onclick="submitAddress()">Submit</button>
+						</div>
+					</div>
+					<% } %>
+
+						<div class="col-md-6">
+
+							<div class="row mb-5">
+								<div class="col-md-12">
+									<h2 class="h3 mb-3 text-black">Coupon Code</h2>
+									<div class="p-3 p-lg-5 border bg-white">
+
+										<!-- <label for="c_code" class="text-black mb-3">Enter your coupon code if you have
+											one</label>
+										<div class="input-group w-75 couponcode-wrap">
+											<input type="text" class="form-control me-2" id="c_code"
+												placeholder="Coupon Code" aria-label="Coupon Code"
+												aria-describedby="button-addon2">
+											<div class="input-group-append">
+												<button class="btn btn-black btn-sm" type="button"
+													id="button-addon2">Apply</button>
+											</div>
+										</div> -->
+										<label for="c_code" class="text-black mb-3">Click the button to apply
+											coupon</label>
+										<button type="button" class="btn btn-dark" id="addCoupon" data-bs-toggle="modal"
+											data-bs-target="#exampleModal">Add Coupon</button>
+
+									</div>
+								</div>
+							</div>
+
+							<div class="row mb-5">
+								<div class="col-md-12">
+									<h2 class="h3 mb-3 text-black">Your Order</h2>
+									<div class="p-3 p-lg-5 border bg-white">
+										<table class="table site-block-order-table mb-5">
+											<thead>
+												<th>Product</th>
+												<th>Total</th>
+											</thead>
+											<tbody>
+												<% for(let i=0;i<cart.items.length;i++){ %>
+													<tr>
+														<td>
+															<%= cart.items[i].product.productTitle %> <strong
+																	class="mx-2">x</strong>
+																<%= cart.items[i].quantity%>
+														</td>
+														<td>
+															<%= cart.items[i].price %>
+														</td>
+													</tr>
+													<% } %>
+														<tr class="text-end d-flex justify-content-between"
+															id="couponDetails">
+														</tr>
+														<tr>
+															<td class="text-black font-weight-bold"><strong>Cart
+																	Subtotal</strong></td>
+															<td class="text-black" id="grandTotal">
+																<%= cart.totalPrice %>
+															</td>
+														</tr>
+														<input type="hidden" id="couponId">
+														<!-- <tr>
+		                      <td class="text-black font-weight-bold"><strong>Order Total</strong></td>
+		                      <td class="text-black font-weight-bold"><strong>$350.00</strong></td>
+		                    </tr>-->
+											</tbody>
+										</table>
+
+										<!-- <div class="border p-3 mb-3">
+		                  <h3 class="h6 mb-0"><a class="d-block" data-bs-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false" aria-controls="collapsebank">Direct Bank Transfer</a></h3>
+
+		                  <div class="collapse" id="collapsebank">
+		                    <div class="py-2">
+		                      <p class="mb-0">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+		                    </div>
+		                  </div>
+		                </div>
+
+		                <div class="border p-3 mb-3">
+		                  <h3 class="h6 mb-0"><a class="d-block" data-bs-toggle="collapse" href="#collapsecheque" role="button" aria-expanded="false" aria-controls="collapsecheque">Cheque Payment</a></h3>
+
+		                  <div class="collapse" id="collapsecheque">
+		                    <div class="py-2">
+		                      <p class="mb-0">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+		                    </div>
+		                  </div>
+		                </div>
+
+		                <div class="border p-3 mb-5">
+		                  <h3 class="h6 mb-0"><a class="d-block" data-bs-toggle="collapse" href="#collapsepaypal" role="button" aria-expanded="false" aria-controls="collapsepaypal">Paypal</a></h3>
+
+		                  <div class="collapse" id="collapsepaypal">
+		                    <div class="py-2">
+		                      <p class="mb-0">Make your payment directly into our bank account. Please use your Order ID as the payment reference. Your order won’t be shipped until the funds have cleared in our account.</p>
+		                    </div>
+		                  </div>
+		                </div> -->
+										<div>
+											<h5 class="text-black text-center">Payment Method<span
+													class="text-danger">*</span></h5>
+										</div>
+										<!-- <div class="border p-3 mb-3">
+											<label for="cashOnDelivery" class="text-dark" data-bs-toggle="collapse"
+												href="#" role="button" aria-expanded="false"
+												aria-controls="cashOnDelivery"><input type="radio"
+													value="cashOnDelivery" name="paymentMethod" id="cashOnDelivery"
+													checked> Cash On Delivery</label><br>
+											
+											<label for="razorPay" class="text-dark" data-bs-toggle="collapse" href="#"
+												role="button" aria-expanded="false" aria-controls="razorPay"><input
+													type="radio" value="razorPay" name="paymentMethod" id="razorPay">
+												RazorPay</label>
+										</div> -->
+										<% if(address){ %>
+											<div class="form-group text-center">
+												<button type="button" class="btn btn-black btn-sm py-3 btn-block mb-2"
+													onclick="cashOnDeliveryButton()">Cash on Delivery</button>
+												<button type="button" class="btn btn-black btn-sm py-3 btn-block mb-2"
+													onclick="walletPaymentButton()">Wallet Payment</button>
+												<button type="button" class="btn btn-black btn-sm py-3 btn-block mb-2"
+													onclick="razorPayButton()">RazorPay</button>
+											</div>
+											<!-- <button id="rzp-button1" class="btn btn-black btn-lg">Pay with Razorpay</button> -->
+											<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+											<% } %>
+
+
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<!-- </form> -->
+
+				</div>
+				</div>
+				<!-- modal for coupon -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header bg-dark text-light">
+								<h5 class="modal-title" id="exampleModalLabel">Coupon Details</h5>
+								<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div>
+							<div class="modal-body text-black">
+								<% if (couponToUser.length===0) { %>
+									<p class="text-muted">No coupons available for you.</p>
+									<% } else { %>
+										<% couponToUser.forEach(function(coupon) { %>
+											<div class="card mb-2">
+												<div class="card-body">
+													<h5 class="card-title">Coupon Code: <%= coupon.coupon_code %>
+													</h5>
+													<p class="card-text mb-0">Minimum Amount: <%= coupon.minimumAmount
+															%>
+													</p>
+													<p class="card-text mb-0">Maximum Discount: <%= coupon.maximumAmount
+															%>
+													</p>
+													<p class="card-text">Expiry Date: <%=
+															coupon.expiryDate.toDateString() %>
+													</p>
+													<button class="btn btn-dark btn-sm"
+														onclick="checkCoupon('<%= coupon._id %>')"
+														data-bs-dismiss="modal">Apply</button>
+												</div>
+											</div>
+											<% }); %>
+												<% } %>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<script>
+					const houseName = document.getElementById('houseName')
+					const place = document.getElementById('place')
+					const district = document.getElementById('district')
+					const pinCode = document.getElementById('pinCode')
+					const email = document.getElementById('email')
+					const addressId = document.getElementById('addressId')
+
+					document.getElementById('select-address').addEventListener('change', function () {
+						const selectedAddressId = this.value; // Get the selected option's value (_id)
+
+						// Send the selected address ID to the backend using fetch 
+						fetch(`/checkoutPage?selectedAddressId=${selectedAddressId}`, {
+							method: 'PATCH',
+							headers: {
+								'Content-Type': 'application/json'
+							},
+							// body: JSON.stringify({ addressId: selectedAddressId })
+						})
+							.then(response => {
+								if (!response.ok) {
+									throw new Error('Network response was not ok');
+								}
+								return response.json();
+							})
+							.then(data => {
+								// Handle the response from the backend if needed
+								console.log(data);
+								houseName.value = data.houseName
+								place.value = data.place
+								district.value = data.district
+								pinCode.value = data.pinCode
+								email.value = data.userEmail
+								addressId.value = data._id
+							})
+							.catch(error => {
+								// Handle errors
+								console.error('There was a problem with your fetch operation:', error);
+							});
+					});
+
+				</script>
+
+
+				<script>
+
+
+					function submitAddress() {
+
+						const addressData = {
+							houseName: houseName.value,
+							place: place.value,
+							districts: district.value,
+							pinCode: pinCode.value,
+							email: email.value
+						}
+
+
+						fetch('/addAddress', { method: 'POST', headers: { 'Content-Type': 'Application/JSON' }, body: JSON.stringify(addressData) })
+
+						setTimeout(() => {
+							window.location.reload()
+						}, 300)
+					}
+				</script>
+				<script>
+					const razorPay = document.getElementById('razorPay').value
+					const cashOnDelivery = document.getElementById('cashOnDelivery').value
+					function razorPayButton() {
+						const couponId = document.getElementById('couponId').innerText
+						Swal.fire({
+							title: "Are you sure?",
+							icon: "question",
+							showCancelButton: true,
+							confirmButtonColor: "#04F700",
+							cancelButtonColor: "#d33",
+							confirmButtonText: "Yes",
+						}).then(async (result) => {
+							if (result.isConfirmed) {
+								const response = await fetch('/razorPay', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ couponId }),
+
+								})
+									.then(response => response.json())
+									.then((data) => {
+										const user = {
+											name: "<%= user.username %>",
+											email: "<%= user.email %>",
+											phone: "<%= user.phone %>",
+										}
+										const options = {
+											key: 'rzp_test_ihsNz6lracNIu3',
+											amount: data.currency,
+											order_id: data.id,
+											name: 'L-App',
+											description: 'purchase Description',
+											image: 'https://example.com/logo.png',
+											handler: function (response) {
+												if (response.razorpay_payment_id) {
+													const couponId = document.getElementById('couponId').innerText
+													fetch('/orderPlacing', {
+														method: "POST",
+														headers: { 'Content-Type': 'application/json' },
+														body: JSON.stringify({ addressId: addressId.value, couponId }),
+													});
+													Swal.fire({
+														title: "Order placed!",
+														text: "Your order has been placed successfully.",
+														icon: "success",
+														showConfirmButton: false
+													});
+													setTimeout(() => {
+														window.location.href = '/thankyou';
+													}, 2000);
+												} else {
+													fetch('/failedOrder', {
+														method: "POST",
+														headers: { 'Content-Type': 'application/json' },
+													});
+													Swal.fire({
+														title: "Payment failed",
+														text: "Your payment could not be processed. Please try again.",
+														icon: "error",
+														showConfirmButton: true
+													});
+													setTimeout(() => {
+														window.location.href = '/orders';
+													}, 2000);
+												}
+											},
+											prefill: {
+												name: user.name,
+												email: user.email,
+												contact: user.phone
+											},
+											theme: {
+												color: '#171717'
+											}
+										}
+										const rzp = new Razorpay(options)
+										rzp.on('payment.failed', function (response) {
+											fetch('/failedOrder', {
+												method: "POST",
+												headers: { 'Content-Type': 'application/json' },
+												body: JSON.stringify({ addressId: addressId.value, couponId }),
+											});
+											window.location.href = '/orders';
+										});
+										rzp.open()
+
+									})
+
+									.catch(error => {
+										Swal.fire({
+											title: "Net work error",
+											text: "Your payment could not be processed. Please try again.",
+											icon: "error",
+											showConfirmButton: false
+										});
+										setTimeout(() => {
+											location.reload()
+										}, 2000);
+										console.error('Error initiating payment:', error);
+									});
+							}
+						});
+
+					}
+				</script>
+				<script>
+					async function cashOnDeliveryButton() {
+						const couponId = document.getElementById('couponId').innerText
+						const totalAmount = document.getElementById('grandTotal').innerText
+						if (totalAmount > 1000) {
+							Swal.fire({
+								icon: "warning",
+								text: "Order above 1000 rupees are not allowed for COD",
+							});
+							return
+						}
+						const response = await fetch('/cashOnDelivery', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ addressId: addressId.value, couponId, totalAmount })
+						})
+						const data = await response.json()
+						if (data.success) {
+
+							Swal.fire({
+								position: "center",
+								icon: "success",
+								title: "Your Order has been Placed",
+								showConfirmButton: false,
+								timer: 1500
+							});
+
+							setTimeout(() => {
+								window.location.href = '/thankyou';
+							}, 2000);
+						} else {
+							Swal.fire({
+								icon: "error",
+								title: "Oops...",
+								text: "The Product is out of Stock!",
+
+							});
+						}
+					}
+
+				</script>
+				<script>
+					function walletPaymentButton() {
+						const couponId = document.getElementById('couponId').innerText
+
+						fetch('/walletPayment', {
+							method: 'POST',
+							headers: { 'Content-Type': 'application/json' },
+							body: JSON.stringify({ addressId: addressId.value, couponId })
+						})
+							.then(response => response.json())
+							.then((data) => {
+								if (data == false) {
+									Swal.fire({
+										position: "center",
+										icon: "warning",
+										title: "Insufficient Balance in Wallet",
+										showConfirmButton: false,
+										timer: 1500
+									});
+								} else if (data == true) {
+									Swal.fire({
+										position: "center",
+										icon: "success",
+										title: "Order Placed",
+										showConfirmButton: false,
+										timer: 1500
+									});
+									setTimeout(() => {
+										window.location.href = '/thankyou';
+									}, 1750);
+								}
+							})
+					}
+				</script>
+
+				<script>
+					async function checkCoupon(couponId) {
+						try {
+							const response = await fetch(`/checkCoupon`, {
+								method: 'PATCH',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify({ couponId })
+							});
+							const data = await response.json();
+							const grandTotal = document.getElementById('grandTotal');
+							grandTotal.className = 'text-success';
+							grandTotal.style.fontWeight = 'bold';
+							grandTotal.innerText = data.totalAmount;
+
+							const couponDetails = document.getElementById('couponDetails');
+							const addCouponButton = document.getElementById('addCoupon').style.display = 'none'
+							couponDetails.innerHTML = `
+	<p class="text-success">you saved &#x20B9;<b id="discountPrice">${data.discountAmount}</b> with '${data.couponCode}'</p> <span type="button" class="material-symbols-outlined text-danger" onclick="removeCoupon()">
+	cancel
+</span>
+  `;
+							document.getElementById('couponId').innerText = data.couponId;
+						} catch (error) {
+							console.error(error);
+						}
+					}
+					async function removeCoupon() {
+						window.location.reload()
+					}
+
+				</script>
+
+				<%- include('./userLayout/userFooter') %>

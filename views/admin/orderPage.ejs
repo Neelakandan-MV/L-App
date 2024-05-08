@@ -1,0 +1,121 @@
+<%- include('./partials/adminHeader') %>
+    <div class="screen-overlay"></div>
+    <%- include('./partials/aside.ejs')  %>
+    <main class="main-wrap">
+        
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order List </h2>
+                    <p>Orders of your users are listed here</p>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row gx-3">
+                        <div class="col-lg-4 col-md-6 me-auto">
+                            <input class="form-control container search text-dark" id="search" type="search" placeholder="Search Name" aria-label="Search">
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const searchInput = document.getElementById('search');
+                                const tableRows = document.querySelectorAll('.table-light tr');
+                        
+                                searchInput.addEventListener('input', function () {
+                                    const searchTerm = searchInput.value.toLowerCase();
+                        
+                                    tableRows.forEach(function (row) {
+                                        const categoryName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+                        
+                                        if (categoryName.includes(searchTerm)) {
+                                            row.style.display = '';
+                                        } else {
+                                            row.style.display = 'none';
+                                        }
+                                    });
+                                });
+                            });
+                        </script>
+                        <!-- <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                                <option>Status</option>
+                                <option>Active</option>
+                                <option>Disabled</option>
+                                <option>Show all</option>
+                            </select>
+                        </div> -->
+                    </div>
+                </header> <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th scope="col">Payment Method</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col" class="text-end"> Action </th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-light">
+                                <% for(let i=0; i<orders.length; i++){ %>
+                                <tr>
+                                    <td><b><%= orders[i].userId.username %></b></td>
+                                    <td><% if(orders[i].paymentMethod == 'CashOnDelivery'){%><span class="material-symbols-outlined">
+                                        shopping_bag
+                                        </span><% }else{ %><img src="assets/imgs/card-brands/2.png" class="border" height="20"><% } %><%= orders[i].paymentMethod %></td>
+                                    
+                                    <td><%= orders[i].userId.email %></td>
+                                    <td><%= orders[i].totalAmount %></td>
+                                    <td><span class="badge rounded-pill alert-warning"><%= orders[i].orderStatus %></span></td>
+                                    <td><%= orders[i].date.toLocaleDateString() %></td>
+                                    <td class="text-end">
+                                        <a href="/adminOrderDetails?orderId=<%= orders[i]._id %>" class="btn btn-md rounded font-sm">Detail</a>
+                                    </td>
+                                </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-15 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <% for(let i=1; i<=totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="/adminOrders?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/vendors/select2.min.js"></script>
+    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="assets/js/main.js" type="text/javascript"></script>
+</body>
+
+</html>

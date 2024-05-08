@@ -1,0 +1,130 @@
+<%- include('./partials/adminHeader') %>
+
+<body>
+    <%- include('./partials/aside.ejs')  %>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Categories </h2>
+                    <p>Add or edit a category</p>
+                </div>
+                <div>
+                    <input class="form-control container search text-dark" id="search" type="search" placeholder="Search Categories" aria-label="Search">
+                </div>
+                <div>
+                    <a href="/createCategory" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <% if( cat.length > 0 ){ %>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Sl-No</th>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                            <th class="text-end">Edit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-light">
+                                        <% for (let i = 0; i < cat.length; i++) { %>
+                                        <tr>
+                                            <td><%= i +1 %><input type="hidden" id="catDetails<%= i %>" value="<%= cat[i]._id %>"></td>
+                                            <td><b><%= cat[i].category %></b></td>
+                                            <td><%= cat[i].description %></td>
+                                            <td><span class="badge rounded-pill <%= cat[i].isList == true ? 'alert-success' : 'alert-warning' %> " id="status<%= i %>"><%=cat[i].isList == true? 'Listed' : 'Unlisted'  %></span></td>
+                                            <td><a onclick="isList('<%= cat[i]._id %>')" class="btn btn-sm btn-brand rounded font-sm mt-14 toggle-btn <%= cat[i].isList == true ? 'alert-success' : 'alert-danger' %>" ><%= cat[i].isList ==true ? 'Unlist': 'List' %></a></td>
+                                            <td class="text-end"><a href="/catEdit?id=<%= cat[i]._id %>"><span class="material-symbols-outlined">
+                                                edit
+                                                </span> </a>
+                                            </td>
+                                        </tr>    
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                                <% }else{ %>
+                                    <h1 class="text-center text-secondary mt-5">No users found in the database</h1>
+                                <% } %>
+                            </div>
+                        </div> <!-- .col// -->
+                    </div> <!-- .row // -->
+                </div> <!-- card body .// -->
+            </div> <!-- card .// -->
+        </section> <!-- content-main end// -->
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchInput = document.getElementById('search');
+                const tableRows = document.querySelectorAll('.table-light tr');
+        
+                searchInput.addEventListener('input', function () {
+                    const searchTerm = searchInput.value.toLowerCase();
+        
+                    tableRows.forEach(function (row) {
+                        const categoryName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+        
+                        if (categoryName.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        </script>
+        
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+    <%- include('./partials/adminFooter.ejs') %>
+<script>
+    
+    function isList(categoryId) {
+        
+        fetch(`/isList?catId=${categoryId}`, {
+            method:'PUT',
+        })
+    
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
+        });
+
+        setTimeout(() => {
+            window.location.reload()                                    ///This setTimeOut should be removed before hosting
+        }, 800);
+
+    }
+
+</script>
+    
+</body>
+
+</html>

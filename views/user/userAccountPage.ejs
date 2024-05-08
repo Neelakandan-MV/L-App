@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="author" content="Untree.co">
+  <link rel="shortcut icon" href="favicon.png">
+
+  <meta name="description" content="" />
+  <meta name="keywords" content="bootstrap, bootstrap4" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+		<!-- Bootstrap CSS -->
+		<link href="static/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+		<link href="static/css/tiny-slider.css" rel="stylesheet">
+		<link href="static/css/style.css" rel="stylesheet">
+        <!-- <link href="assets/css/main.css" rel="stylesheet" type="text/css" /> -->
+		<title>L-App</title>
+	</head>
+<body>
+
+    <%- include('./userLayout/navBar') %>
+
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <span class="material-symbols-outlined">
+                    person
+                    </span>
+            </a>
+            <h5 class="text-black"><strong>LApp</strong></h5>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item active">
+                    <a class="menu-link" href="/userAccount"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Info</span>
+                    </a>
+                </li>
+
+                <li class="menu-item">
+                    <a class="menu-link" href="/orders"> <i class="icon material-icons md-store"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                </li>
+
+                <li class="menu-item">
+                    <a class="menu-link" href="/wallet"> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Wallet</span>
+                    </a>
+                    
+                </li>
+                <li class="menu-item">
+                    <a class="menu-link" href="/changePassword"> <i class="icon material-icons md-account_balance_wallet"></i>
+                        <span class="text">Change Password</span>
+                    </a>
+                </li>
+            </ul>
+            <hr>
+        </nav>
+    </aside>
+
+    <!-- Start Hero Section -->
+    <div class="container">
+        <% if (locals.alert) { %>
+            <div class="alert alert-danger text-center m-3" id="alert">
+              <%= locals.alert %>
+            </div>
+            <% } %>
+            <h1 class="text-center"> User Details</h1>
+        </div>
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="container grey">
+                    <div class="row">
+                        <div class="col-md-4 offset-md-4">
+                            
+                            <form action="/editUser" method="post">
+                                <div class="form-group text-center">
+                                    <% if(user){ %>
+                                    <label for="username">Username:</label>
+                                    <input type="text" name="username" class="form-control translucent-input text-center" id="username" value="<%= user.username %>">
+
+                                    <label for="phone">Phone Number:</label>
+                                    <input type="text" name="phone" class="form-control translucent-input text-center" id="phone" value="<%= user.phone %>">
+
+                                    <button type="submit" id="editButton" class="m-2 btn btn-secondary text-center" style="margin-left: 30%; display: none;">Edit user</button>
+                                    <% } %>
+                                    </div>
+                                </form>  
+                                    </div>
+                                    <div class="col-md-12 offset-md-0">
+                                        <div class="form-group text-center">
+                                        <% if(address.length !== 0){ %>
+                                            <!-- <label for="productVariant" class="form-label">Address</label>
+                                            <select name="productVariant" class="form-control text-center" id="product_variant">
+                                              <% for(let i=0; i<address.length;i++){ %>
+                                                <option value="<%= address[i].houseName %>">
+                                                  <%= address[i].houseName %>,<%= address[i].place %>,<%= address[i].district %>,<%= address[i].pinCode %>
+                                                </option>
+                                                <% } %>
+                                            </select> -->
+                                            <button type="button" class=" mt-2 btn btn-primary text-center"  data-toggle="modal" data-target="#viewAddress">View Address</button>
+                                            <button type="button" class=" mt-2 btn btn-primary text-center"  data-toggle="modal" data-target="#addAddress">Add Address</button>
+                                    <% }else{  %>
+                                        <button type="button" class=" mt-5 btn btn-primary text-center"  data-toggle="modal" data-target="#addAddress">Create Address</button>
+                                   <% } %>
+                                </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    
+    <!--modal for add address  -->
+
+<div class="modal fade bd-example-modal-lg" id="addAddress" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="container mb-4">
+            <div class="row">
+                <div class="col-md-4 offset-md-4">
+                    <h1 class="text-center"> Add Address</h1>
+                    <form action="/addAddress" method="post">
+                        <div class="form-group text-center text-danger">
+
+                            <label for="username" class="text-dark">House / Building Name:</label>
+                            <input type="text" class="form-control translucent-input text-center" id="username" name="houseName">
+
+                            <label for="Place" class="text-dark">Place:</label>
+                            <input type="text" class="form-control translucent-input text-center" id="username" name="place">
+
+                            <label for="districts" class="text-dark form-label">District:</label>
+                                            <select class="form-control" id="product_variant" name="districts">
+                                              <% for(let i=0; i<districts.length; i++){ %>
+                                                <option value="<%= districts[i].name%>">
+                                                  <%= districts[i].name%>
+                                                </option>
+                                                <% } %>
+                                            </select>
+                            <label for="pinCode" class="text-dark">PIN Code:</label>
+                            <input type="number" class="form-control translucent-input text-center" id="username" name="pinCode">
+                        
+                            <label for="email">Email:</label>
+                            <input type="hidden" class="form-control translucent-input text-center" id="email" name="email" value="<%= user.email %>">
+                        
+                        
+                        </div>
+                        <button type="submit" class="mt-5 btn btn-secondary text-center" style="margin-left: 30%;">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- modal for View Address -->
+
+<div class="modal fade bd-example-modal-lg" id="viewAddress" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Selected</th>
+                        <th>Addresses</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (let i = 0; i < address.length; i++) { %>
+                    <tr>
+                        <td>
+                            <% if(address[i].selected == true){ %>
+                                <span class="material-symbols-outlined">
+                                    done
+                                    </span>
+                                    <% } %>
+                                    <td><a href="/editAddress?addressId=<%= address[i]._id %>"><%= address[i].houseName%>,<%= address[i].place%>,<%= address[i].district%>,<%= address[i].pinCode%></a></td> 
+                                    <td><a href="/removeAddress?addressId=<%= address[i]._id %>"><span class="material-symbols-outlined">
+                                        delete
+                                        </span></a></td>
+                    </tr>
+                    
+                    <% } %>
+                </tbody>
+            </table>
+      </div>
+    </div>
+  </div>
+
+
+<style>
+.menu-aside{list-style:none;margin:1rem;padding:0}.menu-aside a{display:block;text-decoration:none}.menu-aside .menu-item{margin-bottom:5px}.menu-aside .menu-item .icon{color:#adb5bd;margin-right:10px;font-size:24px}.menu-aside .menu-item.active .icon{color:#088178}.menu-aside .menu-item.active .menu-link{background-color:rgba(8,129,120,0.2)}.menu-aside .menu-item.active .submenu a.active{color:#088178!important}.menu-aside .menu-link{padding:10px;font-weight:500;font-size:13px;color:#292f46;border-radius:0.3rem;position:relative}.menu-aside .menu-link:hover{-webkit-transition:.2s linear;transition:.2s linear;background-color:#e9ecef}.menu-aside .submenu{margin-left:44px;display:none;margin-top:10px}.menu-aside .submenu a{color:#6c757d;padding:5px 0 5px 15px;-webkit-transition-duration:0.3s;transition-duration:0.3s;position:relative;margin-left:5px}.menu-aside .submenu a:hover{color:#000;-webkit-transition-duration:0.3s;transition-duration:0.3s}.menu-aside .submenu a:before{content:"";width:5px;height:5px;position:absolute;background-color:#adb5bd;left:0;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);border-radius:50%}.menu-aside .menu-item.active .submenu{display:block} .aside,.itemside .left{position:relative;-ms-flex-negative:0;flex-shrink:0}.navbar-aside{max-width:300px;display:block;position:fixed;top:0;bottom:0;width:100%;overflow-y:auto;background-color:#fff;-webkit-box-shadow:none;box-shadow:none;z-index:10;border-right:1px solid #eee}.navbar-aside .aside-top{padding:12px .5rem;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;border-bottom:1px solid #eee;min-height:72px}.navbar-aside .aside-top .brand-wrap{padding-left:0.5rem;padding-right:0.5rem;display:inline-block}.navbar-aside .aside-top .logo{max-width:120px;margin-top:5px;min-width:120px}.main-header{padding-left:3%;padding-right:3%;min-height:72px;background-color:#fff;-webkit-box-shadow:0 0.75rem 1.5rem rgba(18,38,63,0.03);box-shadow:0 0.75rem 1.5rem rgba(18,38,63,0.03);border-bottom:1px solid #eee}
+.main-header .nav{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.main-header .nav-item > a{color:#6c757d;display:block;text-decoration:none;position:relative;padding:0 10px}.main-header .nav-item > a .badge{position:absolute;right:2px;top:-5px;color:#ffffff;height:16px;width:16px;font-weight:500;font-size:10px;text-align:center;line-height:17px;display:block;padding:0;background-color:#088178}.main-header .nav-item.dropdown{margin-right:5px}.main-header .nav-link:hover{background-color:transparent;color:#088178}.main-header .col-search{-webkit-box-flex:0.5;-ms-flex-positive:0.5;flex-grow:0.5}.main-header .col-nav{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.main-header .brand-wrap img.logo{max-width:130px;margin-top:5px}.nav-item img.rounded-circle{border:2px solid #eee}.nav-item img.rounded-circle:hover{border-color:#088178}.content-header{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;margin-bottom:30px}.content-header .content-title{margin-bottom:0}.inner{padding:1rem}body.aside-mini .main-wrap{margin-left:80px}body.aside-mini .navbar-aside{max-width:80px;overflow:visible;position:absolute;min-height:100%;bottom:auto}body.aside-mini .navbar-aside .aside-top{text-align:center}body.aside-mini .navbar-aside .aside-top > div{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1}body.aside-mini .navbar-aside .brand-wrap,body.aside-mini .navbar-aside .logo{display:none}body.aside-mini .menu-aside .menu-link{text-align:center}body.aside-mini .menu-aside .menu-link .text{display:none}body.aside-mini .menu-aside .menu-link .icon{margin-right:0}body.aside-mini .menu-aside .submenu{border:1px solid #ddd;border-radius:0.25rem;-webkit-box-shadow:0 0.5rem 1rem rgba(0,0,0,0.15);box-shadow:0 0.5rem 1rem rgba(0,0,0,0.15);background-color:white;margin-left:0;padding:10px;position:absolute;left:100%;top:0;width:180px}body.aside-mini .menu-aside .menu-item{position:relative}body.aside-mini .menu-aside .menu-item:hover .submenu{display:block;z-index:10}body.aside-mini .menu-aside .menu-item.has-submenu .menu-link:after{display:none}footer.main-footer{bottom:0;padding:30px 3%;position:absolute;right:0;width:100%;height:60px}body.dark{background-color:#222736;color:#fff}body.dark .content-main{background-color:#222736;color:#f6f6f6}body.dark .card-title{color:#f6f6f6!important}body.dark .bg-light{background-color:#2f3446!important}body.dark .brand-wrap .logo{-webkit-filter:brightness(2);filter:brightness(2)}body.dark .navbar-aside{background-color:#2f3446;border-right:1px solid #383e50}body.dark .navbar-aside .aside-top{border-bottom:1px solid #383e50}body.dark h1,body.dark h2,body.dark h3,body.dark h4,body.dark h5,body.dark h6{color:#f6f6f6}body.dark .menu-aside .menu-item .icon{color:rgba(173,181,189,0.7)}body.dark .menu-aside .menu-item.active .icon{color:#fff}body.dark .menu-aside .menu-item.active .menu-link{background-color:#383e50}body.dark .menu-aside .menu-link{color:#f8f9fa}body.dark .menu-aside .menu-link:hover{background-color:#383e50;color:#f8f9fa}body.dark .menu-aside .submenu{background-color:#2f3446;border-color:#1e2231}body.dark .menu-aside .submenu a{color:#cfdbe6}body.dark .menu-aside .submenu a:hover{color:#fff}body.dark .main-header{background-color:#2f3446;border-bottom:1px solid #2f3446}body.dark .main-header .nav-item > a{color:#fff}body.dark .main-header .nav-link:hover,body.dark .main-header .nav-link.active{background-color:#383e50;color:#fff}body.dark .card,body.dark .card-header{background-color:#2a3042}body.dark .card{border:1px solid #303547}body.dark .card-header{border-color:#383e50}body.dark .box{background:#2f3446}body.dark .table{--bs-table-hover-bg:black;--bs-table-hover-color:#fff;color:#fff;border-color:#383e50}body.dark .form-control,body.dark .form-select{background-color:#1e2231;border-color:#383e50;color:#fff}body.dark .btn{color:white}body.dark .btn-light{background-color:#383e50;border-color:#383e50;color:#fff}body.dark .btn-light i{color:#e9ecef}body.dark .btn-light:hover{background-color:#2f3446;border-color:#434a5f}body.dark .itemside{color:#fff}body.dark a.itemside{color:#fff}body.dark .nav-pills .nav-link{color:#fff}body.dark .nav-pills .nav-link:hover{color:#fff}body.dark .nav-pills .nav-link.active{color:#fff;background-color:#383e50}body.dark .card-product-grid .title{color:#fff}body.dark hr{color:#383e50!important;opacity:1}body.dark .custom_select .select2-container--default .select2-selection--single{background-color:#32394e;border:2px solid #32394e}body.dark table{color:#a6b0cf}body.dark table thead{background:#32394e!important}body.dark .table-light{--bs-table-bg:#32394e;--bs-table-striped-bg:#ecedee;--bs-table-striped-color:#000;--bs-table-active-bg:#dfe0e1;--bs-table-active-color:#000;--bs-table-hover-bg:#e5e6e7;--bs-table-hover-color:#000;color:#f6f6f6!important;border-color:#dfe0e1}body.dark .pagination-area .page-link{background-color:#2a3042;color:#f6f6f6}body.dark .itemlist{border-bottom:1px solid rgba(222,226,230,0.1)}body.dark .form-check-input{background-color:#32394e;border:1px solid #a6b0cf}body.dark .btn-light{-webkit-box-shadow:none;box-shadow:none}body.dark .itemlist:hover{background-color:rgba(88,151,251,0.075)}body.dark .table-hover > tbody > tr:hover{--bs-table-accent-bg:rgba(88,151,251,0.075);color:var(--bs-table-hover-color)}body.dark .box{border:1px solid #383e50}body.dark .card-user .card-header{background:#383e50!important}body.dark table{color:#ccc!important}body.dark .card-header.bg-primary{background:#383e50!important}body.dark .form-control,body.dark .form-select{border:1px solid #383e50}body.dark .border-end{border-right:1px solid #383e50!important}body.dark .border-bottom{border-bottom:1px solid #383e50!important}body.dark main{display:block;background-color:#222736}body.dark .dropdown-menu{color:#a6b0cf;background-color:#2a3042;border:1px solid #32394e}body.dark .dropdown-menu a{color:#a6b0cf}body.dark .dropdown-menu .dropdown-item:focus,body.dark .dropdown-menu .dropdown-item:hover{color:#e9ecef;background-color:#32394e}body.dark .dropdown-menu .dropdown-item.text-danger{color:#f6f6f6!important}.mobile-block{display:none}.btn-mobile{display:none}@media (max-width:1200px){.main-wrap{margin-left:220px}.navbar-aside{max-width:220px}}@media (max-width:992px){.itemlist .col-price{text-align:right}.itemlist .col-check{display:none}.card-header .col-check{display:none}}@media all and (max-width:768px){.mobile-block{display:block!important}.mobile-hide{display:none!important}.btn-mobile{display:inline-block!important}.navbar-aside{z-index:900;-webkit-transform:translateX(-100%);transform:translateX(-100%);overflow-x:hidden;-webkit-transition:visibility .2s ease-in-out,-webkit-transform .2s ease-in-out;transition:visibility .2s ease-in-out,-webkit-transform .2s ease-in-out;transition:visibility .2s ease-in-out,transform .2s ease-in-out;transition:visibility .2s ease-in-out,transform .2s ease-in-out,-webkit-transform .2s ease-in-out}.navbar-aside .aside-top .logo{height:40px}.navbar-aside.show{visibility:visible;-webkit-transform:translateX(0);transform:translateX(0)}}
+</style>
+<style>
+    label{
+        color: #171717;
+    }
+    .container{
+        color: #171717;
+    }
+</style>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+<script>
+    setTimeout(() => {
+  document.getElementById("alert").style.display = "none";
+}, 3000);
+</script>
+<script>
+    const inputField1 = document.getElementById('username')
+    const inputField2 = document.getElementById('email')
+    const inputField3 = document.getElementById('phone')
+    const editButton =document.getElementById('editButton')
+    inputField1.addEventListener('input',()=>{
+        editButton.style.display='inline-block';
+    })
+    inputField2.addEventListener('input',()=>{
+        editButton.style.display='inline-block';
+    })
+    inputField3.addEventListener('input',()=>{
+        editButton.style.display='inline-block';
+    })
+</script>
+
+</html>

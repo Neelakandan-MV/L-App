@@ -1,0 +1,178 @@
+<%- include('./partials/adminHeader.ejs') %>
+<div class="screen-overlay"></div>
+<%- include('./partials/aside.ejs') %>
+<main class="main-wrap">
+ 
+    <section class="content-main">
+      <div class="content-header">
+        <div>
+          <h2 class="content-title card-title">Coupon List </h2>
+        </div>
+        <div>
+          <a href="/addCoupon" class="btn btn-primary"><i class="material-icons md-plus"></i>Create new</a>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Coupon Code</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">%</th>
+                  <th scope="col">Up to</th>
+                  <th scope="col">Max amount</th>
+                  <th scope="col">Exp date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col"> Action </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (coupon.length> 0) { %>
+                  <% coupon.forEach(element=> { %>
+                    <tr>
+                      <td>
+                        <%= element.coupon_code %>
+                      </td>
+                      <td>
+                        <%= element.description %>
+                      </td>
+                      <td>
+                        <%= element.percentage %>
+                      </td>
+                      <td>
+                        <%= element.minimumAmount %>
+                      </td>
+                      <td>
+                        <%= element.maximumAmount %>
+                      </td>
+                      <td>
+                        <%= formatDate(element.expiryDate) %>
+                      </td>
+                      <% function formatDate(date) { const options={ year: 'numeric' , month: 'short' , day: 'numeric'
+                        }; return new Date(date).toLocaleDateString(undefined, options); } %>
+                        <td>
+                          <% if (element.isListed==true) { %>
+                            <span class="text-success">List</span>
+                            <% } else { %>
+                              <span class="text-danger">Unlist</span>
+                              <% } %>
+                        </td>
+                        <td>
+                          <% if (element.isListed) { %>
+                            <a class="badge rounded alert-danger"
+                              onclick="unlistCoupon('<%= element._id %>')">Unlist</a>
+                            <% } else { %>
+                              <a class="badge rounded alert-success" onclick="listCoupon('<%= element._id %>')">List</a>
+                              <% } %>
+                                <a href="/editCoupon?couponId=<%= element._id %>" class="badge rounded alert-secondary"
+                                  onclick="editCoupon('<%= element._id %>')">Edit</a>
+                        </td>
+                    </tr>
+                    <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="8">No coupons available.</td>
+                        </tr>
+                        <% } %>
+              </tbody>
+            </table>
+          </div> <!-- table-responsive //end -->
+        </div> <!-- card-body end// -->
+      </div> <!-- card end// -->
+      <div class="pagination-area mt-30 mb-50">
+        <div class="d-flex justify-content-center">
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+              <% for(let i=1; i <=totalPages; i++) { %>
+                <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                  <a class="page-link" href="/couponList?page=<%= i %>">
+                    <%= i %>
+                  </a>
+                </li>
+                <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </section> <!-- content-main end// -->
+    <footer class="main-footer font-xs">
+      <div class="row pb-30 pt-15">
+        <div class="col-sm-6">
+          <script>
+            document.write(new Date().getFullYear())
+          </script> ©, Evara - HTML Ecommerce Template .
+        </div>
+        <div class="col-sm-6">
+          <div class="text-sm-end">
+            All rights reserved
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+  <script>
+    async function unlistCoupon(couponId) {
+      Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#00cc00",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await fetch('/unlistCoupon', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ couponId })
+          })
+          const data = await response.json()
+          if (data.success) {
+                  Swal.fire({
+                  icon: "success",
+                  title: "Unlisted",
+                  showConfirmButton: false,
+                });
+                setTimeout(() => {
+                  location.reload()
+                }, 2000);
+          }
+        }
+      })
+    }
+    async function listCoupon(couponId) {
+      Swal.fire({
+        title: "Are you sure?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonColor: "#d33",
+        confirmButtonColor: "#00cc00",
+        confirmButtonText: "Yes",
+        cancelButtonText: "No",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await fetch('/listCoupon', {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ couponId })
+          })
+          const data = await response.json()
+          if (data.success) {
+                  Swal.fire({
+                  icon: "success",
+                  title: "Listed",
+                  showConfirmButton: false,
+                });
+                setTimeout(() => {
+                  location.reload()
+                }, 2000);
+          }
+        }
+      })
+    }
+  </script>
+
+<%- include('./partials/adminFooter.ejs') %>
