@@ -197,7 +197,7 @@ const productPages = async(req,res)=>{
         const variantId = product.productVariant
         const productVariant = await Variant.findById({_id:variantId})
         const variant = await Variant.find({})
-        const allProducts = await Product.find({})
+        const allProducts = await Product.find({category:product.category}).populate('category');
         let productInWishlist = false
         if(req.session.userId){
         const userWishList = await WishList.findOne({userId})

@@ -428,6 +428,7 @@ const addProduct = async (req, res) => {
             productTitle: productTitle,
             description: description,
             price: price,
+            originalPrice: price,
             stock: stock,
             category: category,
             productVariant: productVariant,
@@ -479,6 +480,7 @@ const productEdit = async (req,res)=>{
                 productTitle: productTitle,
                 description: description,
                 price: price,
+                originalPrice: price,
                 stock: stock,
                 category: category,
                 productVariant: productVariant,
@@ -856,7 +858,7 @@ const createOffer = async(req,res)=>{
             
         }else{
             offerCategoryProducts.forEach(async(item)=>{
-                item.price = item.price - Math.floor((item.price*discountValue))/100
+                item.price = item.price - Math.floor((item.originalPrice*discountValue))/100
                 await item.save()
             })
         }
@@ -881,7 +883,7 @@ const createOffer = async(req,res)=>{
             offerProduct.price = offerProduct.price - offerAmount
             offerProduct.save()
         }else{
-            const offerAmount = Math.floor((offerProduct.price*discountValue))/100
+            const offerAmount = Math.floor((offerProduct.originalPrice*discountValue))/100
             offerProduct.price = offerProduct.price - offerAmount
             offerProduct.save()
         }
@@ -912,9 +914,9 @@ const offerToggle = async(req,res)=>{
             }else{
                 offerCategoryProducts.forEach(async(item)=>{
                 if(offer.isActive){
-                    item.price = item.price + Math.floor((item.price*offer.discountValue))/100 
+                    item.price = item.price + Math.floor((item.originalPrice*offer.discountValue))/100 
                 }else{
-                    item.price = item.price - Math.floor((item.price*offer.discountValue))/100
+                    item.price = item.price - Math.floor((item.originalPrice*offer.discountValue))/100
                     }
                 await item.save()
                 })
@@ -924,13 +926,13 @@ const offerToggle = async(req,res)=>{
             if(offer.discountType ==="fixedAmount"){
                 const offerAmount = offer.discountValue
                 if(offer.isActive){
-                offerProduct.price = offerProduct.price + offerAmount 
+                offerProduct.price = offerProduct.price + offerAmount
                 }else{
                     offerProduct.price = offerProduct.price - offerAmount
                 }
                 offerProduct.save()
             }else{
-                const offerAmount = Math.floor((offerProduct.price * offer.discountValue))/100
+                const offerAmount = Math.floor((offerProduct.originalPrice * offer.discountValue))/100
                 if(offer.isActive){
                 offerProduct.price = offerProduct.price + offerAmount
                 }else{
