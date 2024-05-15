@@ -6,6 +6,7 @@
     <main class="main-wrap">
         <section class="content-main">
             <div class="content-header">
+                <% if(order.couponDiscount>0){ order.totalAmount += 50 } %>
                 <div>
                     <h2 class="content-title card-title">Order detail</h2>
                     <p>Details for Order ID: #<%= order._id %></p>
@@ -79,7 +80,7 @@
                                 <div class="text">
                                     <h6 class="mb-1">Order info</h6>
                                     <p class="mb-1">
-                                        Shipping: Fargo express <br> Pay method: <%= order.paymentMethod %> <br>
+                                        Shipping: Fargo express <br> Pay method: <%= order.paymentMethod %> <br> Coupon Discount: <%= order.couponDiscount%>
                                     </p>
                                 </div>
                             </article>
@@ -139,13 +140,24 @@
                                         <tr>
                                             <td colspan="4">
                                                 <article class="float-end">
+                                                    <% if(order.couponDiscount !== 0){ %>
+                                                        <dl class="dlist">
+                                                            <dt>Shipping cost:</dt>
+                                                            <dd>₹ 50</dd>
+                                                        </dl>
+                                                        <% }else{ %>
+                                                            <dl class="dlist">
+                                                                <dt>Shipping cost:</dt>
+                                                                <dd>Free</dd>
+                                                            </dl>
+                                                            <% } %>
                                                     <dl class="dlist">
                                                         <dt>Subtotal:</dt>
-                                                        <dd>₹<%= order.totalAmount%></dd>
+                                                        <dd>₹<%= order.totalAmount + order.couponDiscount%></dd>
                                                     </dl>
                                                     <dl class="dlist">
-                                                        <dt>Shipping cost:</dt>
-                                                        <dd>Free</dd>
+                                                        <dt>Coupon Discount:</dt>
+                                                        <dd>₹<%= -order.couponDiscount%></dd>
                                                     </dl>
                                                     <dl class="dlist">
                                                         <dt>Grand total:</dt>

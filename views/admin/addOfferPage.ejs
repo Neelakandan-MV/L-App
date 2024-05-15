@@ -1,0 +1,241 @@
+<%- include('./partials/adminHeader.ejs') %>
+<body>
+    <div class="screen-overlay"></div>
+    <%- include('./partials/aside.ejs') %>
+    <main class="main-wrap">
+        <section class="content-main">
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">Add Offers</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <% if (locals.alert) { %>
+                            <div class="text-danger text-center m-3" id="error">
+                              <%= locals.alert %>
+                            </div>
+                          <% } %>
+                        <form action="/createOffer" method="POST" onsubmit="validateOfferForm()">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-4">
+                                            <div class="form-group">
+                                                <label for="productName" class="form-label"> Name</label>
+                                                <input type="text" class="form-control" id="name" name="name" >
+                                                <span id="offerNameError" class="error-message" style="color: red"></span>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <label for="brand" class="form-label">Discount On</label>
+                                                <select class="form-select" id="discountOn" name="discountOn" onchange="handleDiscountOn()">
+                                                    <option value="">Select Offer On</option>
+                                                    <option value="category">Category</option>
+                                                    <option value="product">Products</option>
+                                                </select>
+                                                <span id="categoryError" class="error-message "
+                                                    style="color:red"></span>
+                                            </div>
+
+                                            <div class="mb-4">
+                                                <div class="form-group">
+                                                    <label for="expireDate" class="form-label">Expire On (dd-mm-yy)</label>
+                                                    <!-- <input type="text" class="form-control datepicker" id="expireOn" name="expireOn" required> -->
+                                                    <input type="date" id="expireOn" class="form-control me-2" name="expireOn">
+                                                </div>
+                                                <span id="expireDateError" class="error-message"
+                                                    style="color: red"></span>
+                                            </div>
+
+                                        </div> <!-- row.// -->
+                                
+                                <div class="mb-4">
+                                    <label for="product" class="form-label">Product</label>
+                                    <select class="form-select" id="discountedProduct" name="discountedProduct">
+                                        <option value="">Select Product</option>
+                                        <% products.forEach(product=> { %>
+                                            <option value="<%= product._id%>">
+                                                <%= product.productTitle %>
+                                            </option>
+                                            <% }); %>
+
+                                    </select>
+                                    <span id="discountedProductError" class="error-message " style="color:red"></span>
+                                </div>
+
+
+                                <div class="mb-4">
+                                    <label for="category" class="form-label">Category</label>
+                                    <select class="form-select" id="discountedCategory" name="discountedCategory">
+                                        <option value="">Select Category</option>
+                                        <% category.forEach(categories=> { %>
+                                            <option value="<%= categories._id %>">
+                                                <%= categories.category %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="brand" class="form-label">Discount Type</label>
+                                    <select class="form-select" id="discountType" name="discountType">
+                                        <option value="">Select Discount Type</option>
+                                        <option value="percentage">Percentage</option>
+                                        <option value="fixedAmount">Fixed Amount</option>
+                                    </select>
+                                    <span id="discountTypeError" class="error-message " style="color:red"></span>
+                                </div>
+
+                                <div class="mb-4">
+
+                                    <div class="form-group">
+                                        <label for="productName" class="form-label">Discount Value</label>
+                                        <input type="text" class="form-control" id="discountValue" name="discountValue">
+                                        <span id="discountValueError"  class="error-message" style="color: red"></span>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <button type="submit" value="Add Offer" class="add-offer-button btn btn-primary mt-4">Add Offer</button>
+                                        </div>
+                                    </div>
+                                     <!-- col.// -->
+                                </div>
+                                </div>
+                            </div> <!-- .row end// -->
+                            </div>
+                        </form>
+
+
+                    </div>
+
+                </div>
+            </div>
+            </div>
+        </section> <!-- content-main end// -->
+        <%- include('./partials/adminFooter.ejs') %>
+    </main>
+    <script src="/admin-assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/admin-assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/admin-assets/js/vendors/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/admin-assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/admin-assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<script>
+        // Initialize datepicker
+        // $('.datepicker').datepicker({
+        //     format: 'dd-mm-yyyy', // Date format: dd-mm-yyyy
+        //     autoclose: true // Close the datepicker when a date is selected
+        // });
+
+        function handleDiscountOn(){
+            const discountedCategorySelect = document.getElementById('discountedCategory');
+            const discountedProductSelect = document.getElementById('discountedProduct');
+            if(event.target.value == 'product'){
+                discountedCategorySelect.disabled = true;
+                discountedProductSelect.disabled = false;
+            }else{
+                discountedProductSelect.disabled = true;
+                discountedCategorySelect.disabled = false
+            }
+
+        }
+
+        // function validateOfferForm() {
+        //     const offerName = document.getElementById('name').value.trim();
+        //     const discountOn = document.getElementById('discountOn').value;
+        //     const category = document.getElementById('discountedCategory').value.trim();
+        //     const expireDate = document.getElementById('expireOn').value.trim();
+        //     const product = document.getElementById('discountedProduct').value.trim();
+        //     const discountType = document.getElementById('discountType').value;
+        //     const discountValue = document.getElementById('discountValue').value.trim();
+        //     const currentDate = new Date();
+        //     currentDate.setHours(0, 0, 0, 0); // Set hours to 0 for comparison with selected date
+            
+            
+        //     // Reset error messages
+        //     document.getElementById('offerNameError').innerText = '';
+        //     document.getElementById('categoryError').innerText = '';
+            
+        //     document.getElementById('expireDateError').innerText = '';
+            
+        //     document.getElementById('discountedProductError').textContent = '';
+        //     document.getElementById('discountTypeError').innerText = '';
+        //     document.getElementById('discountValueError').textContent = '';
+        //     let isValid = true;
+
+
+        //     // Validate expire date format
+        //     // const dateRegex = /^\d{2}-\d{2}-\d{4}$/;
+        //     const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
+
+
+        //     if (!dateRegex.test(expireDate)) {
+        //         document.getElementById('expireDateError').innerText = 'Invalid date format (mm/dd/yyyy)';
+        //         isValid= false;
+        //     }
+
+        //     // Check if the selected date is a future date
+        //     const [day, month, year] = expireDate.split('-');
+        //     const selectedDate = new Date(`${year}/${month}/${day}`);
+        //     selectedDate.setHours(0, 0, 0, 0); // Set hours to 0 for comparison
+        //     if (selectedDate <= currentDate) {
+        //         document.getElementById('expireDateError').innerText = 'Expire date must be a future date';
+        //         isValid = false;
+        //     }
+
+            
+
+        //     // Validate offer Name
+        //     if (!offerName) {
+                
+        //         console.log(offerName,"name");
+        //         document.getElementById('offerNameError').innerText = 'Offer Name is required';
+        //         isValid = false;
+        //         event.preventDefault()
+        //     }
+
+        //     // Validate Discount On option
+        //     if (discountOn === '') {
+        //         document.getElementById('categoryError').textContent = 'Please select a valid Discount On option.';
+        //         isValid = false;
+        //     }
+
+        //     // Additional validation checks for product and category
+        //     if (discountOn === 'category' && product !== '') {
+        //         document.getElementById('discountedProductError').textContent = 'You can only select either a Product or a Category, not both.';
+        //         isValid = false;
+        //     } else if (discountOn === 'product' && category !== '') {
+        //         document.getElementById('categoryError').textContent = 'You can only select either a Product or a Category, not both.';
+        //         isValid = false;
+        //     }
+
+        //     // Validate discount type
+        //     if (discountType === '') {
+        //         document.getElementById('discountTypeError').textContent = 'Please select a Discount Type.';
+        //         isValid = false;
+        //     }
+
+        //     // Validate discount value
+        //     if (discountValue === '') {
+        //         document.getElementById('discountValueError').textContent = 'Discount Value is required.';
+        //         isValid = false;
+        //     }
+
+
+    
+
+        //     if (isValid) {
+
+        //       }
+        //     console.log(isValid)
+        //       return isValid;
+        // }
+
+</script>

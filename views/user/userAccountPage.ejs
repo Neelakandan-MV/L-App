@@ -167,24 +167,19 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Selected</th>
+                        <th>Index</th>
                         <th>Addresses</th>
-                        <th>Action</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody>
                     <% for (let i = 0; i < address.length; i++) { %>
                     <tr>
-                        <td>
-                            <% if(address[i].selected == true){ %>
-                                <span class="material-symbols-outlined">
-                                    done
-                                    </span>
-                                    <% } %>
-                                    <td><a href="/editAddress?addressId=<%= address[i]._id %>"><%= address[i].houseName%>,<%= address[i].place%>,<%= address[i].district%>,<%= address[i].pinCode%></a></td> 
-                                    <td><a href="/removeAddress?addressId=<%= address[i]._id %>"><span class="material-symbols-outlined">
-                                        delete
-                                        </span></a></td>
+                        <td><%= i+1 %></td>
+                        <td><%= address[i].houseName%>,<%= address[i].place%>,<%= address[i].district%>,<%= address[i].pinCode%></td>
+                        <td><a href="/editAddress?addressId=<%= address[i]._id %>"><span class="material-symbols-outlined">edit</span></a></td>
+                        <td><a href="/removeAddress?addressId=<%= address[i]._id %>"><span class="material-symbols-outlined">delete</span></a></td>
                     </tr>
                     
                     <% } %>

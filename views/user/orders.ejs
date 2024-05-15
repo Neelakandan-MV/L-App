@@ -162,8 +162,13 @@
                                                     <%= user.username %>
                                                 </b></td> -->
                                             <td>
-                                                <p id="totalAmount<%= index %>"><%= item.totalAmount %></p>
+                                                <% if(item.couponDiscount !==0 ){ %>
+                                                <p id="totalAmount<%= index %>"><%= item.totalAmount+50 %></p>
+                                                <% }else{ %>
+                                                    <p id="totalAmount<%= index %>"><%= item.totalAmount %></p>
+                                                    <% } %>
                                             </td>
+                                            
                                             <td class="text-dark">
                                                 <% if(item.orderStatus == 'Delivered'){ %>
                                                 <span class="badge rounded-pill alert-success text-black"><%= item.orderStatus%></span>
@@ -182,17 +187,20 @@
                                                         <% } %>
                                             </td>
                                             <td>
-                                                <% if(item.orderStatus !== 'Cancelled' && item.orderStatus !== 'Delivered' && item.paymentStatus !== 'refunded' && item.paymentStatus !== 'failed'){ %>
+                                                <% if(item.orderStatus !== 'Cancelled' && item.orderStatus !== 'Delivered' && item.paymentStatus !== 'refunded' && item.paymentStatus !== 'failed' &&item.orderStatus !=='waitingForAdminApproval' &&item.orderStatus !=='approvedForReturn'){ %>
                                                 <a href="/orderCancel?orderId=<%= item._id %>"
                                                 class="btn btn-md rounded font-sm " onclick="reload()">Cancel</a>
-                                                <% }else if(item.orderStatus === 'Delivered' && item.paymentStatus == 'paid' && item.paymentStatus !== 'failed'){ %>
-                                                    <a href="/orderReturn?orderId=<%= item._id %>"
-                                                        class="btn btn-md rounded font-sm" onclick="reload()">Return</a>
+                                                <% }else if(item.orderStatus === 'Delivered' && item.paymentStatus == 'paid' && item.paymentStatus !== 'failed' && item.orderStatus !=='approvedForReturn'){ %>
+                                                    <a href="/orderReturnRequest?orderId=<%= item._id %>"
+                                                        class="btn btn-md rounded font-sm" onclick="reload()">Apply for Return</a>
                                                         <% }else if(item.paymentStatus == 'failed'){ %>
                                                             
                                                             <button type="button"
                                                                 class="btn btn-md rounded font-sm" onclick="retryPayment('<%= index %>','<%= item._id %>')">Retry Payment</button>
-                                                                <% } %>
+                                                                <% }else if(item.orderStatus = 'approvedForReturn' && item.orderStatus !== 'Cancelled' && item.orderStatus !=='Delivered' && item.orderStatus !=='Shipped' && item.orderStatus !=='pending' && item.paymentStatus !=='pending' && item.paymentStatus!=='refunded' && item.orderStatus !=='waitingForAdminApproval'){ %>
+                                                                    <a href="/orderReturn?orderId=<%= item._id %>"
+                                                                        class="btn btn-md rounded font-sm" onclick="reload()">Return</a>
+                                                                        <% } %>
                                             </td>
                                             <td class="text-end">
                                                     <a href="/orderDetails/<%= item._id %>"

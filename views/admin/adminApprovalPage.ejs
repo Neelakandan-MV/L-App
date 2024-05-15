@@ -6,53 +6,11 @@
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Order List </h2>
-                    <p>Orders of your users are listed here</p>
+                    <h2 class="content-title card-title">Return Requests</h2>
+                    <p>Orders requested for return are listed here</p>
                 </div>
-                <ul class="nav">
-                    <li class="nav-item">
-                    <a href="/adminNotification"><span class="material-symbols-outlined" style="color: gray;">
-                        notifications
-                        </span><span class="badge text-warning"><%= adminRequests.length %></span></a>
-                    </li>
-                </ul>
             </div>
             <div class="card mb-4">
-                <header class="card-header">
-                    <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input class="form-control container search text-dark" id="search" type="search" placeholder="Search Name" aria-label="Search">
-                        </div>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const searchInput = document.getElementById('search');
-                                const tableRows = document.querySelectorAll('.table-light tr');
-                        
-                                searchInput.addEventListener('input', function () {
-                                    const searchTerm = searchInput.value.toLowerCase();
-                        
-                                    tableRows.forEach(function (row) {
-                                        const categoryName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
-                        
-                                        if (categoryName.includes(searchTerm)) {
-                                            row.style.display = '';
-                                        } else {
-                                            row.style.display = 'none';
-                                        }
-                                    });
-                                });
-                            });
-                        </script>
-                        <!-- <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div> -->
-                    </div>
-                </header> <!-- card-header end// -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -65,6 +23,7 @@
                                     <th scope="col">Status</th>
                                     <th scope="col">Date</th>
                                     <th scope="col" class="text-end"> Action </th>
+                                    <th scope="col" class="text-end"> Details </th>
                                 </tr>
                             </thead>
                             <tbody class="table-light">
@@ -76,27 +35,26 @@
                                         </span><% }else{ %><img src="assets/imgs/card-brands/2.png" class="border" height="20"><% } %><%= orders[i].paymentMethod %></td>
                                     
                                     <td><%= orders[i].userId.email %></td>
-                                    <td><% if(orders[i].couponDiscount>0){ %><%= orders[i].totalAmount+50 %><% }else{ %><%= orders[i].totalAmount %><% } %></td>
+                                    <td><%= orders[i].totalAmount %></td>
                                     <td><span class="badge rounded-pill alert-warning"><%= orders[i].orderStatus %></span></td>
                                     <td><%= orders[i].date.toLocaleDateString() %></td>
+                                    <td><a href="/adminApprove?orderId=<%= orders[i]._id %>" class="btn btn-md rounded font-sm">Approve Request</a></td>
                                     <td class="text-end">
                                         <a href="/adminOrderDetails?orderId=<%= orders[i]._id %>" class="btn btn-md rounded font-sm">Detail</a>
                                     </td>
                                 </tr>
-                                <% } %>
+                                <% } %> 
                             </tbody>
                         </table>
+                        <%if(orders.length === 0){ %>
+                            <h4 class="text-center">No Requests</h4>
+                            <% } %>
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
             <div class="pagination-area mt-15 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
-                        <% for(let i=1; i<=totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="/adminOrders?page=<%= i %>"><%= i %></a>
-                            </li>
-                        <% } %>
                     </ul>
                 </nav>
             </div>

@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-        const Product=require('./productModel')
-        const User=require('./user_model')
 
         const orderSchema = new mongoose.Schema({
             userId: {
@@ -70,6 +68,10 @@ const mongoose = require('mongoose');
                 type:Date,
                 default:''
             },
+            couponId:{
+                type:mongoose.Schema.Types.ObjectId,
+                required:false,
+            },
             couponDiscount:{
                 type:Number,
                 default:0,
@@ -81,4 +83,4 @@ const mongoose = require('mongoose');
         });
 
 
-        module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('Order', orderSchema);

@@ -542,13 +542,16 @@ const cashOnDelivery = async(req,res)=>{
             // await Product.updateOne({_id:productId},{$inc:{stock:-1}})
         }
         let totalAmount = cart.totalPrice
+        let discountAmount = 0
         if (couponId) {
             const selectedCoupon = await Coupon.findOne({_id:couponId})
             const discountPrice = Math.ceil(cart.totalPrice*selectedCoupon.percentage/100)
             if(discountPrice > selectedCoupon.maximumAmount){
                  totalAmount =cart.totalPrice - selectedCoupon.maximumAmount
+                 discountAmount = selectedCoupon.maximumAmount
             }else{
                 totalAmount = cart.totalPrice - discountPrice
+                discountAmount = discountPrice
             }
             await Coupon.updateOne({ _id: couponId }, {$push: { userId:userId }})
         }
@@ -566,6 +569,8 @@ const cashOnDelivery = async(req,res)=>{
                 pinCode:address.pinCode,
                 userEmail:address.userEmail,
             },
+            couponDiscount:discountAmount
+            
         })
         await orderDetails.save()
         await Cart.updateOne({userId:user._id},{$set:{items:[]}})
@@ -587,13 +592,14 @@ const razorPay = async(req,res)=>{
             const selectedCoupon = await Coupon.findOne({_id:couponId})
             const discountPrice = Math.ceil(cart.totalPrice*selectedCoupon.percentage/100)
             if(discountPrice > selectedCoupon.maximumAmount){
-                 totalAmount =cart.totalPrice - selectedCoupon.maximumAmount
+                 totalAmount =cart.totalPrice - selectedCoupon.maximumAmount+50
             }else{
-                totalAmount = cart.totalPrice - discountPrice
+                totalAmount = cart.totalPrice - discountPrice+50
             }
         }
+        
         const paymentData = {
-            amount: totalAmount*100 ,
+            amount: totalAmount*100,
             currency: 'INR',
             receipt: 'receipt_order_123',
             payment_capture: 1
@@ -631,13 +637,16 @@ const orderPlacing = async(req,res)=>{
         }
 
         let totalAmount = cart.totalPrice
+        let discountAmount = 0
         if (couponId) {
             const selectedCoupon = await Coupon.findOne({_id:couponId})
             const discountPrice = Math.ceil(cart.totalPrice*selectedCoupon.percentage/100)
             if(discountPrice > selectedCoupon.maximumAmount){
                  totalAmount =cart.totalPrice - selectedCoupon.maximumAmount
+                 discountAmount = selectedCoupon.maximumAmount
             }else{
                 totalAmount = cart.totalPrice - discountPrice
+                discountAmount = discountPrice
             }
             await Coupon.updateOne({ _id: couponId }, {$push: { userId:userId }})
         }
@@ -654,7 +663,8 @@ const orderPlacing = async(req,res)=>{
                 pinCode:addressforDelivery.pinCode,
                 userEmail:addressforDelivery.userEmail,
             },
-            paymentStatus:'paid'
+            paymentStatus:'paid',
+            couponDiscount:discountAmount,
         })
         await orderDetails.save()
         await Cart.updateOne({userId:user._id},{$set:{items:[]}})
@@ -746,7 +756,20 @@ const orderCancel = async(req,res)=>{
     }
 }
 
-
+const orderReturnRequest = async(req,res)=>{
+    try{
+        const userId = req.session.userId
+        const orderId = req.query.orderId
+        const order = await Order.findOne({_id:orderId})
+        const wallet = await Wallet.findOne({userId})
+        // if(order.orderStatus == )
+        order.orderStatus = 'waitingForAdminApproval'
+        await order.save();
+    } catch (error) {
+        console.error(error);
+        res.render('error',{error})
+    }
+}
 const orderReturn = async(req,res)=>{
     try {
         const userId = req.session.userId
@@ -754,7 +777,7 @@ const orderReturn = async(req,res)=>{
         const order = await Order.findOne({_id:orderId})
         const wallet = await Wallet.findOne({userId})
         // if(order.orderStatus == )
-        order.orderStatus = 'Returned'
+        order.orderStatus = 'returned'
         order.products.map(async (item)=>{
             item.orderStatus = true
             const productId = item.product
@@ -858,7 +881,25 @@ const walletPayment = async(req,res)=>{
         const user = await User.findOne({email:userData})
         const cart = await Cart.findOne({userId:user._id}).populate('items.product')
         const wallet = await Wallet.findOne({userId:user._id})
-        if(wallet.balance >= cart.totalPrice){
+
+
+        let totalAmount = cart.totalPrice
+        let discountAmount =0
+        if (couponId) {
+            const selectedCoupon = await Coupon.findOne({_id:couponId})
+            const discountPrice = Math.ceil(cart.totalPrice*selectedCoupon.percentage/100)
+            
+            if(discountPrice > selectedCoupon.maximumAmount){
+                 totalAmount =cart.totalPrice - selectedCoupon.maximumAmount
+                 discountAmount = selectedCoupon.maximumAmount;
+            }else{
+                totalAmount = cart.totalPrice - discountPrice
+                discountAmount = discountPrice;
+            }
+            await Coupon.updateOne({ _id: couponId }, {$push: { userId:userId }})
+        }
+
+        if(wallet.balance >= totalAmount){
 
         let products = cart.items.map((item)=>{
             return item
@@ -874,17 +915,6 @@ const walletPayment = async(req,res)=>{
             // await Product.updateOne({_id:productId},{$inc:{stock:-1}})
         }
 
-        let totalAmount = cart.totalPrice
-        if (couponId) {
-            const selectedCoupon = await Coupon.findOne({_id:couponId})
-            const discountPrice = Math.ceil(cart.totalPrice*selectedCoupon.percentage/100)
-            if(discountPrice > selectedCoupon.maximumAmount){
-                 totalAmount =cart.totalPrice - selectedCoupon.maximumAmount
-            }else{
-                totalAmount = cart.totalPrice - discountPrice
-            }
-            await Coupon.updateOne({ _id: couponId }, {$push: { userId:userId }})
-        }
 
         const orderDetails = new Order({
             userId:user._id,
@@ -899,6 +929,7 @@ const walletPayment = async(req,res)=>{
                 userEmail:address.userEmail,
             },
             paymentStatus:'paid',
+            couponDiscount:discountAmount,
         })
         await orderDetails.save()
         await Cart.updateOne({userId:user._id},{$set:{items:[]}})
@@ -1084,10 +1115,10 @@ const checkCoupon = async(req,res)=>{
         
         if(discountPrice > selectedCoupon.maximumAmount){
             const amountToPay =cart.totalPrice - selectedCoupon.maximumAmount
-            res.json({totalAmount:amountToPay,couponId,discountAmount:selectedCoupon.maximumAmount,couponCode:selectedCoupon.coupon_code})
+            res.json({totalAmount:amountToPay+50,couponId,discountAmount:selectedCoupon.maximumAmount,couponCode:selectedCoupon.coupon_code})
         }else{
             const amountToPay = cart.totalPrice - discountPrice
-            res.json({totalAmount:amountToPay,couponId,discountAmount:discountPrice,couponCode:selectedCoupon.coupon_code})
+            res.json({totalAmount:amountToPay+50,couponId,discountAmount:discountPrice,couponCode:selectedCoupon.coupon_code})
         }
     } catch (error) {
         console.error(error);
@@ -1207,6 +1238,12 @@ const downloadInvoice = async (req, res) => {
         const user = await User.findOne({_id:userId})
         const orderId = req.params.id;
         const order = await Order.findById(orderId);
+        console.log('order:',order);
+        let totalAmount = 0;
+        for(let i=0;i<order.products.length;i++){
+            totalAmount = totalAmount+ order.products[i].price*order.products[i].quantity
+        }
+        console.log("totalAmount : ",totalAmount);
 
         if (!order) {
             return res.status(404).json({ error: 'Order not found' });
@@ -1220,11 +1257,12 @@ const downloadInvoice = async (req, res) => {
             return {
                 "quantity": item.quantity,
                 "description": product.productTitle,
-                "tax": 0,
-                "price": product.price
+                "taxRate": - order.couponDiscount/totalAmount*100,
+                "price": product.price,
             };
         }));
-
+        console.log('productData:-',productsData);
+        
         const data = {
             "currency": "INR",
             "taxNotation": "vat",
@@ -1249,11 +1287,12 @@ const downloadInvoice = async (req, res) => {
             },
             "invoiceDate": order.date.toISOString(),
             "products": productsData,
-            "total": order.totalPrice ,
-            "bottomNotice": order.totalPrice
+            "bottomNotice": `Total Amount Paid : ${order.totalAmount}+50(Delivery charge)=${order.totalAmount+50}`,
         };
 
         const result = await easyinvoice.createInvoice(data);
+        // result.calculations.subtotal = order.totalAmount
+        // result.calculations.total = order.totalAmount+50
 
         const invoicesDir = path.join(__dirname, '..', 'invoices');
         if (!fs.existsSync(invoicesDir)) {
@@ -1444,6 +1483,7 @@ module.exports = {
     services,
     blog,
     contactUs,
+    orderReturnRequest,
     
 
 }

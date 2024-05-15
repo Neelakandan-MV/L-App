@@ -136,6 +136,7 @@
                         <div>
                             <p class="m-0">OrderId : <b>#<%= order._id %></b></p>
                             <p class="m-0">Payment method : <%= order.paymentMethod %></p>
+                            <p class="m-0">Coupon Discount : <%= order.couponDiscount %></p>
                             <p class="m-0">Date : <%= order.date.toLocaleDateString() %></p>
                             <p class="m-0 ">Payment Status:
                             <% if(order.paymentStatus == 'paid'){ %>
@@ -193,20 +194,41 @@
                                     </div>
                                             <!-- Display order details -->
                                             <div class="text-end">
+                                                <% if(order.couponDiscount ===0 ){ %>
                                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery
                                                         Charges : </span>  free</p>
+                                                        <% }else{ %>
+                                                            <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery
+                                                                Charges : </span>  50</p>
+                                                                <% } %>
+                                            </div>
+                                            <div class="text-end">
+                                                <p class="text-muted mb-0"><span class="fw-bold me-4">Sub Total: </span> <%= order.totalAmount+order.couponDiscount %> </p>      
+                                            </div>
+                                            <div class="text-end">
+                                                <p class="text-muted mb-0"><span class="fw-bold me-4">Coupon Discounts: </span> <%= -order.couponDiscount %> </p>      
                                             </div>
                                             <div class='text-end'>
+                                                <% if(order.couponDiscount !==0){ %>
                                                 <p class="text-muted mb-0"><span class="fw-bold me-4">Grand Total :</span>₹
-                                                    <b><%= order.totalAmount %></b>
+                                                    <b><%= order.totalAmount+50 %></b>
                                                 </p>
+                                                <% }else{ %>
+                                                    <p class="text-muted mb-0"><span class="fw-bold me-4">Grand Total :</span>₹
+                                                        <b><%= order.totalAmount %></b>
+                                                    </p>
+                                                    <% } %>
                                             </div>
                         </div>
                         <div class="card-footer border-0 px-4 py-5"
                             style="background-color:rgb(136, 203, 192) ; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                             <h5
                                 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">
+                                <% if(order.couponDiscount ===0){ %>
                                 Total Bill: <span class="h2 mb-0 ms-2"></span>₹ <%= order.totalAmount %>
+                                <% }else{ %>
+                                    Total Bill: <span class="h2 mb-0 ms-2"></span>₹ <%= order.totalAmount+50 %>
+                                    <% } %>
                             </h5>
                         </div>
                         <% if (order.paymentStatus == 'paid' || order.paymentStatus == 'refunded') { %>

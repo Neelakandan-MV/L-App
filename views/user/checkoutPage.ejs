@@ -212,6 +212,8 @@
 														<tr class="text-end d-flex justify-content-between"
 															id="couponDetails">
 														</tr>
+														<tr id="deliveryCharge">
+														</tr>
 														<tr>
 															<td class="text-black font-weight-bold"><strong>Cart
 																	Subtotal</strong></td>
@@ -272,7 +274,7 @@
 													type="radio" value="razorPay" name="paymentMethod" id="razorPay">
 												RazorPay</label>
 										</div> -->
-										<% if(address){ %>
+										<% if(address && cart.totalPrice !==0){ %>
 											<div class="form-group text-center">
 												<button type="button" class="btn btn-black btn-sm py-3 btn-block mb-2"
 													onclick="cashOnDeliveryButton()">Cash on Delivery</button>
@@ -404,6 +406,7 @@
 				<script>
 					const razorPay = document.getElementById('razorPay').value
 					const cashOnDelivery = document.getElementById('cashOnDelivery').value
+
 					function razorPayButton() {
 						const couponId = document.getElementById('couponId').innerText
 						Swal.fire({
@@ -598,12 +601,16 @@
 							grandTotal.innerText = data.totalAmount;
 
 							const couponDetails = document.getElementById('couponDetails');
+							const deliveryCharge = document.getElementById('deliveryCharge');
 							const addCouponButton = document.getElementById('addCoupon').style.display = 'none'
 							couponDetails.innerHTML = `
-	<p class="text-success">you saved &#x20B9;<b id="discountPrice">${data.discountAmount}</b> with '${data.couponCode}'</p> <span type="button" class="material-symbols-outlined text-danger" onclick="removeCoupon()">
-	cancel
-</span>
-  `;
+							<p class="text-success">You saved &#x20B9;<b id="discountPrice">${data.discountAmount}</b> with '${data.couponCode}'</p> <span type="button" class="material-symbols-outlined text-danger" onclick="removeCoupon()">
+							cancel
+							</span>`;
+  							deliveryCharge.innerHTML = `<td class="text-black font-weight-bold"><strong>Delivery Charge</strong></td>
+															<td class="text-black">
+																50
+															</td>`
 							document.getElementById('couponId').innerText = data.couponId;
 						} catch (error) {
 							console.error(error);

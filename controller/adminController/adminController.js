@@ -5,6 +5,7 @@ const Products = require('../../model/productModel')
 const Variant = require('../../model/variantModel')
 const Order = require('../../model/orderModel')
 const Coupon = require('../../model/couponModel')
+const Offer = require('../../model/offerModel')
 const multer = require('multer')
 
 
@@ -275,7 +276,7 @@ const createVariant = async (req, res) => {
 
 //create new categories
 
-const createNewCatpage = (req, res) => {
+const createNewCategorypage = (req, res) => {
     try {
         res.render('admin/createCat')
 
@@ -286,7 +287,7 @@ const createNewCatpage = (req, res) => {
 
 //post method for new categories
 
-const createNewCat = async (req, res) => {
+const createNewCategory = async (req, res) => {
     try {
         
         const categoryName = req.body.category
@@ -315,31 +316,39 @@ const createNewCat = async (req, res) => {
 
 //edit Categories
 
-const editCatPage = async (req, res) => {
+const editCategoryPage = async (req, res) => {
     try {
         const _id = req.query.id;
         const categoryDetails = await Categories.findById({ _id: _id })
-        res.render('admin/editCat', { catDetails: categoryDetails })
+        res.render('admin/editCategory', { catDetails: categoryDetails })
     } catch (error) {
         console.error();
     }
 }
 
-const editCat = async (req, res) => {
+
+const editCategory = async (req, res) => {
     try {
         const { category, description, id } = req.body;
+        const categoryForEdit = await Categories.findById(id)
+        if(category === categoryForEdit.category){
+            await Categories.findOneAndUpdate({ _id: id }, { category, description })
+            console.log('if works');
+            res.redirect('/adminCategories')
+        }else{
         const categoryRegx = /^[a-zA-Z0-9]+(?:[ -][a-zA-Z0-9]+)*$/;
         const allCategories = await Categories.find({},{category:true,_id:false})
         const categoryExists = allCategories.some(item=>item.category == category)
         const categoryRegxCheck = categoryRegx.test(category)
         const categoryDetails =await Categories.findById({_id:id})
         if(categoryExists){
-            res.render('admin/editCat',{catAlert:'The category is already exists',catDetails: categoryDetails})
+            res.render('admin/editCategory',{catAlert:'The category is already exists',catDetails: categoryDetails})
         }else if(!categoryRegxCheck){
-            res.render('admin/editCat',{catAlert:'Invalid category name',catDetails: categoryDetails})
+            res.render('admin/editCategory',{catAlert:'Invalid category name',catDetails: categoryDetails})
         }else{
         await Categories.findOneAndUpdate({ _id: id }, { category, description })
         res.redirect('/adminCategories')
+        }
     }
     } catch (error) {
         console.error(error);
@@ -398,13 +407,20 @@ const addProductPage = async (req, res) => {
     }
 }
 const addProduct = async (req, res) => {
-    upload(req, res, function (err) {
+    upload(req, res,async function (err) {
         if (err instanceof multer.MulterError) {
             return res.status(500).json(err);
         } else if (err) {
             return res.status(500).json(err);
         }
         const { productTitle, description, price, stock, category, productVariant } = req.body;
+        
+        const productExists = await Products.findOne({productTitle:productTitle})
+        if(productExists){
+            const variants = await Variant.find({})
+        const category = await Categories.find({isList:true})
+        return res.render('admin/addProductPage', { category, variant: variants, title: 'Add Products',alert:'Product Already Exists' })
+        }
 
         const images = req.files.map(file => file.filename);
 
@@ -457,6 +473,7 @@ const productEdit = async (req,res)=>{
             const { productTitle, description, price, stock, category, productVariant, productId } = req.body;
             let images = req.files.map(file => file.filename);
             const product = await Products.findOne({_id:productId})
+            if(product.productTitle === productTitle){
             images = [...images,...product.image]
             await Products.findOneAndUpdate({_id:productId},{
                 productTitle: productTitle,
@@ -470,6 +487,28 @@ const productEdit = async (req,res)=>{
             .then(()=>{
                 res.redirect('/adminProductPage')
             })
+        }else{
+            const productExists = await Products.findOne({productTitle})
+            if(productExists){
+                const variants = await Variant.find({})
+                const category = await Categories.find({isList:true})
+                res.render('admin/addProductPage', { category, variant: variants, title: 'Add Products',alert:'Product already exists' })
+            }else{
+                images = [...images,...product.image]
+            await Products.findOneAndUpdate({_id:productId},{
+                productTitle: productTitle,
+                description: description,
+                price: price,
+                stock: stock,
+                category: category,
+                productVariant: productVariant,
+                image:images,
+            })
+            .then(()=>{
+                res.redirect('/adminProductPage')
+            })
+            }
+        }
             
         });
     } catch (error) {
@@ -512,8 +551,9 @@ const orders = async(req,res)=>{
         const skip = (currentPage - 1) * 10;
         const ordersCount = await Order.countDocuments()
         const totalPages = Math.ceil(ordersCount / 10);
+        const adminRequests = await Order.find({orderStatus:'waitingForAdminApproval'}).populate('userId')
         const orders = await Order.find().populate('userId').sort({_id:-1}).skip(skip).limit(10)
-        res.render('admin/orderPage',{orders,currentPage,totalPages})
+        res.render('admin/orderPage',{orders,currentPage,totalPages,adminRequests})
     } catch (error) {
         console.error(error);
     }
@@ -608,11 +648,7 @@ const editCoupon = async(req,res)=>{
     try{
         const {coupon_code,description,percentage,min_amount,max_amount,expiry_date,couponId}=req.body
         const coupon = await Coupon.findOne({_id:couponId})
-        const allCoupons = await Coupon.find()
-        const couponExists = allCoupons.some(item=>item.coupon_code == coupon_code)
-        if(couponExists){
-            res.render('admin/editCoupon',{coupon,alert:'Coupon already exists'})
-        }else if(coupon){
+        if(coupon.coupon_code === coupon_code){
             coupon.coupon_code = coupon_code;
             coupon.description = description;
             coupon.percentage = percentage;
@@ -621,8 +657,21 @@ const editCoupon = async(req,res)=>{
             coupon.expiryDate = expiry_date;
             await coupon.save()
             res.redirect('/couponList')
-        }
-        
+        }else {
+            const couponExists = await Coupon.findOne({coupon_code})
+            if(couponExists){
+            res.render('admin/editCoupon',{coupon,alert:'Coupon already exists'})
+            }else{
+                coupon.coupon_code = coupon_code;
+                coupon.description = description;
+                coupon.percentage = percentage;
+                coupon.minimumAmount = min_amount;
+                coupon.maximumAmount = max_amount;
+                coupon.expiryDate = expiry_date;
+                await coupon.save()
+                res.redirect('/couponList')
+            }
+        }   
     } catch (error) {
         console.error(error);
         res.status(500).json({error:'Internal server error'})
@@ -734,6 +783,171 @@ const bestCategoryPage = async (req, res) => {
 };
 
 
+const adminNotification = async(req,res)=>{
+    try{
+        const orders = await Order.find({orderStatus:'waitingForAdminApproval'}).populate('userId')
+        res.render('admin/adminApprovalPage',{orders})
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+const adminApprove = async(req,res)=>{
+    try{
+        const orderId = req.query.orderId;
+        console.log(orderId);
+        const order = await Order.findById(orderId)
+        order.orderStatus = 'approvedForReturn';
+        order.save()
+        res.redirect('/adminNotification')
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+
+const offerPage = async(req,res)=>{
+    try{
+        const offers = await Offer.find()
+        const products = await Products.find()
+        res.render('admin/offerPage',{offers})
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+const addOfferPage = async(req,res)=>{
+    try{
+        const category = await Categories.find({isList:true})
+        const products = await Products.find({isBlocked:false})
+        res.render('admin/addOfferPage',{category,products})
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+const createOffer = async(req,res)=>{
+    try{
+        const category = await Categories.find({isList:true})
+        const products = await Products.find({isBlocked:false})
+        const {name,discountOn,discountType,discountValue,expireOn,discountedProduct,discountedCategory}=req.body
+        if(discountOn === 'category'){
+            let categoryOfferExists = await Offer.findOne({discountedCategory})
+            if(categoryOfferExists){
+            return res.render('admin/addOfferPage',{category,products,alert:'Category offer already exists'}) 
+            }
+        const newOffer = new Offer({
+            name,
+            discountOn,
+            discountType,
+            discountValue,
+            expireOn,
+            discountedCategory,
+        })
+        await newOffer.save()
+        const offerCategoryProducts = await Products.find({category:discountedCategory})
+        if(discountType ==="fixedAmount"){
+            const offerAmount = discountValue
+            offerCategoryProducts.forEach(async(item)=>{
+                item.price = item.price - offerAmount
+                await item.save()
+            })
+            
+        }else{
+            offerCategoryProducts.forEach(async(item)=>{
+                item.price = item.price - Math.floor((item.price*discountValue))/100
+                await item.save()
+            })
+        }
+
+    }else{
+        let productOfferExists = await Offer.findOne({discountedProduct})
+            if(productOfferExists){
+            return res.render('admin/addOfferPage',{category,products,alert:'Product offer already exists'}) 
+            }
+        const newOffer = new Offer({
+            name,
+            discountOn,
+            discountType,
+            discountValue,
+            expireOn,
+            discountedProduct,
+        })
+        await newOffer.save()
+        const offerProduct = await Products.findOne({_id:discountedProduct})
+        if(discountType ==="fixedAmount"){
+            const offerAmount = discountValue
+            offerProduct.price = offerProduct.price - offerAmount
+            offerProduct.save()
+        }else{
+            const offerAmount = Math.floor((offerProduct.price*discountValue))/100
+            offerProduct.price = offerProduct.price - offerAmount
+            offerProduct.save()
+        }
+    }
+    res.redirect('/offers')
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+const offerToggle = async(req,res)=>{
+    try{
+        const offerId = req.query.offerId
+        const offer = await Offer.findById(offerId)
+
+        if(offer.discountOn === 'category'){
+        const offerCategoryProducts = await Products.find({category:offer.discountedCategory})
+            if(offer.discountType ==="fixedAmount"){
+                const offerAmount = offer.discountValue
+                offerCategoryProducts.forEach(async (item)=>{
+                    if(offer.isActive){
+                    item.price = item.price + offerAmount
+                    }else{
+                    item.price = item.price - offerAmount
+                    }
+                    await item.save()
+                })
+            }else{
+                offerCategoryProducts.forEach(async(item)=>{
+                if(offer.isActive){
+                    item.price = item.price + Math.floor((item.price*offer.discountValue))/100 
+                }else{
+                    item.price = item.price - Math.floor((item.price*offer.discountValue))/100
+                    }
+                await item.save()
+                })
+        }
+        }else{
+            const offerProduct = await Products.findOne({_id:offer.discountedProduct})
+            if(offer.discountType ==="fixedAmount"){
+                const offerAmount = offer.discountValue
+                if(offer.isActive){
+                offerProduct.price = offerProduct.price + offerAmount 
+                }else{
+                    offerProduct.price = offerProduct.price - offerAmount
+                }
+                offerProduct.save()
+            }else{
+                const offerAmount = Math.floor((offerProduct.price * offer.discountValue))/100
+                if(offer.isActive){
+                offerProduct.price = offerProduct.price + offerAmount
+                }else{
+                    offerProduct.price = offerProduct.price - offerAmount
+                }
+                offerProduct.save()
+            }
+
+        }
+        offer.isActive = !offer.isActive
+        offer.save()
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 
 module.exports = {
     adminLoginPage,
@@ -743,10 +957,10 @@ module.exports = {
     sales,
     adminLogout,
     adminCategories,
-    createNewCatpage,
-    createNewCat,
-    editCatPage,
-    editCat,
+    createNewCategorypage,
+    createNewCategory,
+    editCategoryPage,
+    editCategory,
     isList,
     productPage,
     addProductPage,
@@ -770,4 +984,10 @@ module.exports = {
     couponUnblock,
     couponBlock,
     generateReport,
+    adminNotification,
+    adminApprove,
+    offerPage,
+    addOfferPage,
+    createOffer,
+    offerToggle,
 }
