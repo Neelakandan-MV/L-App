@@ -109,17 +109,12 @@ const generateReport = async (req, res) => {
     try {
         const { startDate, endDate } = req.body;
   
-        // Fetch orders from the database based on the provided date range
         const orders = await Order.find({
             date: { $gte: new Date(startDate), $lte: new Date(endDate) }
         }).populate('products.product');
-        // Process fetched orders to extract necessary information for the report
+        
         const reportData = orders.map((order, index) => {
-            // let totalPrice = 0;
-            // order.products.forEach(product => {
-            //     totalPrice += product.price * product.quantity;
-            // });
-  
+
             return {
                 orderId: order._id,
                 date: order.date,
@@ -744,41 +739,44 @@ const bestProductPage = async (req, res) => {
 
 const bestCategoryPage = async (req, res) => {
     try {
-        const bestSellingCategories = await Order.aggregate([
+        const CategoryIdsandTotalSales = await Order.aggregate([
             {
                 $unwind: "$products"
             },
             {
                 $group: {
-                    _id: "$products.product.category",
+                    _id: "$products.product",
                     totalSales: { $sum: "$products.quantity" }
                 }
             },
-            {
-                $lookup: {
-                    from: 'Categories',
-                    localField: "_id",
-                    foreignField: "_id",
-                    as: "category"
-                }
-            },
-            {
-                $unwind: "$category"
-            },
-            {
-                $project: {
-                    categoryName: "$category.category",
-                    totalSales: 1
-                }
-            },
-            {
-                $sort: { totalSales: -1 }
-            },
-            {
-                $limit: 5
-            }
+            
         ]);
-        res.render('admin/bestCategory', { bestSellingCategories });
+
+        const categoryId = CategoryIdsandTotalSales.map(async(item)=>{
+            let products = await Products.findById(item._id)
+            let category = await Categories.findById(products.category)
+            return category._id
+        })
+
+
+        Promise.all(categoryId)
+        .then(async(categoryIds) => {
+            // console.log('Resolved Category IDs:', categoryIds);
+            const bestSellingCategories = [];
+
+        for (let i = 0; i < categoryIds.length; i++) {
+            const category = await Categories.findOne({ _id: categoryIds[i] }, { category: true, _id: false });
+            bestSellingCategories.push({ category, bestSellingCategory: CategoryIdsandTotalSales[i].totalSales });
+        }
+        bestSellingCategories.sort((a, b) => b.bestSellingCategory - a.bestSellingCategory);
+        console.log(bestSellingCategories);
+        res.render('admin/bestCategory',{bestSellingCategories});
+        })
+        .catch((error) => {
+            console.error('Error fetching category IDs:', error);
+        });
+// console.log(CategoryIdsandTotalSales);
+
     } catch (error) {
         console.error("Error:", error);
     }
