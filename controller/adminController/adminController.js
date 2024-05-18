@@ -761,22 +761,17 @@ const bestCategoryPage = async (req, res) => {
 
         Promise.all(categoryId)
         .then(async(categoryIds) => {
-            // console.log('Resolved Category IDs:', categoryIds);
             const bestSellingCategories = [];
-
         for (let i = 0; i < categoryIds.length; i++) {
             const category = await Categories.findOne({ _id: categoryIds[i] }, { category: true, _id: false });
             bestSellingCategories.push({ category, bestSellingCategory: CategoryIdsandTotalSales[i].totalSales });
         }
         bestSellingCategories.sort((a, b) => b.bestSellingCategory - a.bestSellingCategory);
-        console.log(bestSellingCategories);
         res.render('admin/bestCategory',{bestSellingCategories});
         })
         .catch((error) => {
             console.error('Error fetching category IDs:', error);
         });
-// console.log(CategoryIdsandTotalSales);
-
     } catch (error) {
         console.error("Error:", error);
     }
@@ -787,7 +782,6 @@ const adminNotification = async(req,res)=>{
     try{
         const orders = await Order.find({orderStatus:'waitingForAdminApproval'}).populate('userId')
         res.render('admin/adminApprovalPage',{orders})
-
     } catch (error) {
         console.error("Error:", error);
     }
@@ -805,7 +799,6 @@ const adminApprove = async(req,res)=>{
         console.error("Error:", error);
     }
 }
-
 
 const offerPage = async(req,res)=>{
     try{

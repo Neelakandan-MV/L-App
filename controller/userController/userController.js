@@ -700,7 +700,7 @@ const order = async(req,res)=>{
         const user = await User.findOne({email:userData})
         const totalOrders = await Order.countDocuments({ userId });
         const totalPages = Math.ceil(totalOrders / perPage);
-        res.render('orders',{cart,orders,totalPages,currentPage:page,user,page:'order',userData})
+        res.render('orders',{cart,orders,totalPages,currentPage:page,user,page:'orders',userData})
     } catch (error) {
         console.error(error);
         res.render('error',{error})
@@ -840,10 +840,11 @@ const userWalletPage = async(req,res)=>{
     try {
         const userId = req.session.userId
         const user = await User.findOne({_id:userId})
+        const userData = req.session.user
         const wallet = await Wallet.findOne({userId:userId}).populate('userId')
         const cart = await Cart.findOne({ userId: userId })
         const cartLength = cart ? cart.items.length : 0;
-        res.status(200).render('userWallet',{wallet,user,cartLength,page:'wallet',cart})
+        res.status(200).render('userWallet',{wallet,user,cartLength,page:'wallet',cart,userData})
 
     } catch (error) {
         console.error(error);
