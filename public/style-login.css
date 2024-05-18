@@ -1,7 +1,14 @@
 body {
     
     background-color: rgb(255, 255, 255);
+}
 
+.container{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .outer {
     margin-top: 10%;
@@ -64,9 +71,7 @@ body {
     display: flex;
     width: 800px;
     height:400px;
-    position: absolute;
-    top: 150px;
-    left: 350px;
+   
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.385);
     
 }

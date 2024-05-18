@@ -1,101 +1,145 @@
 <%-include('./userLayout/header')%>
-<style>
-  body {
-    background-color: #f3e0e2;
-  }
-</style>
-<div class="big">
-  <div class="left">
-    <h3 class="text-dark text-center mt-4"><b>LOGIN</b></h3>
-    <%if(locals.alert){%>
-    <div class="alert alert-danger text-center" id="alert" role="alert">
-      <%= locals.alert%>
+  <style>
+    body {
+      background-color: #f3e0e2;
+    }
+
+    @media (max-width: 425px) {
+      h3{
+        font-size: 40px;
+      }
+      .right {
+        display: none;
+      }
+      .big {
+        box-shadow: none;
+        width: 95%;
+      }
+      .left {
+        box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.385);
+        width: 100%;
+        border-radius: 20px;
+      }
+      .container{
+        padding: 20px 0px;
+      }
+    }
+    @media (max-width: 768px) {
+      
+      h3{
+        font-size: 30px;
+      }
+      .big {
+        border-radius: 20px;
+        width: 95%;
+      }
+      .left {
+        width: 100%;
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+      }
+      .right{
+        border-bottom-right-radius: 20px;
+        border-top-right-radius: 20px
+      }
+      .container{
+        padding: 20px 0px;
+      }
+    }
+  </style>
+<div class="container">
+  <div class="big">
+    <div class="left">
+      <h3 class="text-dark text-center mt-4"><b>LOGIN</b></h3>
+      <%if(locals.alert){%>
+        <div class="alert alert-danger text-center" id="alert" role="alert">
+          <%= locals.alert%>
+        </div>
+        <%}%>
+          <%if(locals.logout){%>
+            <div class="alert alert-success text-center" id="logout" role="alert">
+              <%=(locals.logout)%>
+            </div>
+            <%}%>
+              <form action="/userLogin" method="post" class="form" id="form">
+                <input type="email" placeholder="Enter email" name="email" class="form-control login-email" id="email"
+                  onkeyup="checkEmail()" />
+                <h2 class="text-center" style="font-size: 10px; color:red;" id="email-error"></h2>
+                <input type="password" placeholder="password" name="password" class="form-control login-password"
+                  id="password" oninput="checkPassword()" />
+                <h2 style="font-size: 10px; color:red;" id="paszword-error"></h2>
+                <button type="submit" class="btn-login" id="submit">LOGIN</button>
+              </form>
+              <p class="text-dark text-center mt-3">
+                <small>Don't have an account?<a href="/userSignup ">Sign up</a></small><br>
+                <small>Forgot Password?<a href="/forgotPassword ">Reset Password</a></small>
+              </p>
     </div>
-    <%}%>
-    <%if(locals.logout){%>
-    <div class="alert alert-success text-center" id="logout" role="alert">
-      <%=(locals.logout)%>
+    <div class="right">
+      <h3 class="WELCOME"><b>WELCOME</b></h3>
     </div>
-    <%}%>
-    <form action="/userLogin" method="post" class="form" id="form">
-      <input type="email" placeholder="Enter email" name="email" class="form-control login-email" id="email" onkeyup="checkEmail()"/>
-      <h2 class="text-center" style="font-size: 10px; color:red;" id="email-error"></h2>
-      <input type="password" placeholder="password" name="password" class="form-control login-password" id="password" oninput="checkPassword()"/>
-      <h2 style="font-size: 10px; color:red;" id="paszword-error"></h2>
-      <button type="submit" class="btn-login" id="submit">LOGIN</button>
-    </form>
-    <p class="text-dark text-center mt-3">
-      <small>Don't have an account?<a href="/userSignup ">Sign up</a></small><br>
-      <small>Forgot Password?<a href="/forgotPassword ">Reset Password</a></small>
-    </p>
-    <!-- <div class="text-center">
-    <a href="/auth/google" class="btn btn-google ">Login with Google</a>
-    <a href="/auth/facebook" class="btn btn-facebook">Login with Facebook</a>
-  </div> -->
-  </div>
-  <div class="right">
-    <h3 class="WELCOME"><b>WELCOME</b></h3>
   </div>
 </div>
 
-<script>
 
-const form = document.getElementById('form')
+  <script>
 
-// form.addEventListener('submit', e => {
-//     e.preventDefault();
-//     checkInput();
-//   })
+    const form = document.getElementById('form')
 
-
-function checkInput() {
-    
-  
-let email = document.getElementById('email').value
-let password = document.getElementById('password').value
+    // form.addEventListener('submit', e => {
+    //     e.preventDefault();
+    //     checkInput();
+    //   })
 
 
-  function checkEmail() {
-  
-    const emailError = document.getElementById("email-error");
+    function checkInput() {
+
+
+      let email = document.getElementById('email').value
+      let password = document.getElementById('password').value
+
+
+      function checkEmail() {
+
+        const emailError = document.getElementById("email-error");
         const isValid = email.value.match(/^[A-Za-z\._\-0-9]*[@][A-Za-z]*[\.][a-z]{2,4}$/);
-        
+
         if (!isValid) {
-            emailError.innerHTML = "Please enter a valid email address";
-            email.style.borderBottomColor = "red";
-            return false;
+          emailError.innerHTML = "Please enter a valid email address";
+          email.style.borderBottomColor = "red";
+          return false;
         } else {
-            emailError.innerHTML = "";
-            email.style.borderBottomColor = "green";
-            return true;
+          emailError.innerHTML = "";
+          email.style.borderBottomColor = "green";
+          return true;
         }
+      }
+
+      function validatePassword() {
+        const passwordError = document.getElementById('password-error')
+        const isValidPass = password.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()\-_+=\[\]{}|\\:;"'<>,.?/]).{4,}$/)
+
+        if (!isValidPass) {
+          passwordError.innerHTML = "Password must contain at least 4 characters one uppercase,lowercase,digit and special character";
+          return false;
+
+        } else {
+          passwordError.innerHTML = '';
+          return true;
+        }
+      }
     }
-
-    function validatePassword(){
-  const passwordError = document.getElementById('password-error')
-  const isValidPass = password.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()\-_+=\[\]{}|\\:;"'<>,.?/]).{4,}$/)
-
-  if(!isValidPass){
-    passwordError.innerHTML = "Password must contain at least 4 characters one uppercase,lowercase,digit and special character";
-    return false;
-    
-  }else {
-    passwordError.innerHTML = '';
-    return true;
-  }
-}
-}
-</script>
+  </script>
 
 
 
-<script>
-  setTimeout(() => {
-    document.getElementById("alert").style.display = "none";
-  }, 3000);
-  setTimeout(() => {
-    document.getElementById("logout").style.display = "none";
-  }, 3000);
-</script>
+  <script>
+    setTimeout(() => {
+      document.getElementById("alert").style.display = "none";
+    }, 3000);
+    setTimeout(() => {
+      document.getElementById("logout").style.display = "none";
+    }, 3000);
+  </script>
 
-<%-include('./userLayout/footer')%>
+  <%-include('./userLayout/footer')%>
