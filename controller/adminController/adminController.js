@@ -569,9 +569,7 @@ const orderDetails = async(req,res)=>{
 const orderStatusUpdate = async(req,res)=>{
     try {
         const orderStatus = req.query.value
-        
         const orderId = req.query.orderId
-        
         const order = await Order.findOne({_id:orderId})
         order.orderStatus = orderStatus
         order.save()
@@ -587,7 +585,6 @@ const couponList = async (req, res) => {
     try {
         const perPage = 8;
         const page = req.query.page || 1;
-
         const totalCoupons = await Coupon.countDocuments();
         const coupon = await Coupon.find()
             .skip(perPage * page - perPage)

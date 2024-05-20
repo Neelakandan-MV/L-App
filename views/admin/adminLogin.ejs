@@ -27,14 +27,55 @@
     />
     <title><%=locals.title?title:'Login Page'%></title>
   </head>
-  <body></body>
-</html>
-
 <style>
   body {
     background-color: #f3e0e2;
   }
+
+  @media (max-width: 425px) {
+    h3{
+      font-size: 40px;
+    }
+    .right {
+      display: none;
+    }
+    .big {
+      box-shadow: none;
+      width: 95%;
+    }
+    .left {
+      box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.385);
+      width: 100%;
+      border-radius: 20px;
+    }
+    .container{
+      padding: 20px 0px;
+    }
+  }
+  @media (max-width: 768px) {
+    
+    h3{
+      font-size: 30px;
+    }
+    .big {
+      border-radius: 20px;
+      width: 95%;
+    }
+    .left {
+      width: 100%;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+    }
+    .right{
+      border-bottom-right-radius: 20px;
+      border-top-right-radius: 20px
+    }
+    .container{
+      padding: 20px 0px;
+    }
+  }
 </style>
+<div class="container">
 <div class="big">
   <div class="left">
     <h3 class="text-dark text-center mt-4"><b>LOGIN</b></h3>
@@ -69,6 +110,7 @@
   <div class="right">
     <h3 class="WELCOME text-center"><b>WELCOME ADMIN</b></h3>
   </div>
+</div>
 </div>
 <script>
   setTimeout(() => {
