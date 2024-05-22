@@ -12,7 +12,6 @@ const otpSignupPage = (req,res)=>{
         console.error(error)
     }
 }
-
 const otpSignup = async(req,res)=>{
     try {
         const userOtp = req.query.otp
