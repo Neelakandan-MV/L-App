@@ -25,3 +25,10 @@ L-App is a feature-rich e-commerce platform designed to provide a seamless shopp
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/L-App.git
+ 2. Navigate to the project directory: cd L-App
+    
+ 3. Install dependencies: npm install
+
+ 4. Start the application: npm start
+
+ 5. Open the application in your browser at http://localhost:3000.
